@@ -9,3 +9,5 @@
 
 - Soll der Spielstand in irgendeiner Form gespeichert werden?
 - Wird das Programm einmal oder zweimal ausgeführt? Hat jede Partei ein eigenes Programm oder nutzen beide das selbe?
+- Wie soll mit fehlerhaften Eingaben umgegangen werden?
+- Soll es eine zeitliche Begrenzung geben?
