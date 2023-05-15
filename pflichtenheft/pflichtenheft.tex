@@ -1,0 +1,210 @@
+%start preamble
+\documentclass[paper=a4,fontsize=11pt,DIV14]{scrartcl}%kind of doc, font size, paper size
+\usepackage[ngerman]{babel}%for special german letters etc			
+%\usepackage{t1enc} obsolete, but some day we go back in time and could use this again
+\usepackage[T1]{fontenc}%same as t1enc but better						
+\usepackage[utf8]{inputenc}%utf-8 encoding, other systems could use others encoding		
+\usepackage{amsmath}%get math done
+\usepackage{graphicx}%get pictures & graphics done
+\graphicspath{{pictures/}}%folder to stash all kind of pictures etc
+\usepackage[pdftex,hidelinks]{hyperref}%for links to web
+\usepackage{amssymb}%symbolics for math
+\usepackage{amsfonts}%extra fonts
+\usepackage []{natbib}%citation style
+\usepackage{caption}%captions under everything
+\usepackage{listings}
+\usepackage[titletoc]{appendix}
+\numberwithin{equation}{section} 
+\usepackage[printonlyused,withpage]{acronym}%how to handle acronyms
+\usepackage{float}%for garphics and how to let them floating around in the doc
+\usepackage{cclicenses}%license!
+\usepackage{xcolor}%nicer colors, here used for links
+\usepackage{wrapfig}%making graphics floated by text and not done by minipage
+\pdfpkresolution=2400%higher resolution
+\usepackage{lipsum}%dummy text -- delete if dummies removed
+
+%settings colors for links
+\hypersetup{
+    colorlinks,
+    linkcolor={blue!50!black},
+    citecolor={blue},
+    urlcolor={blue!80!black}
+}
+
+%\usepackage[pagetracker=true]{biblatex}
+
+%%starts with title page%%
+\begin{document}
+\bibliographystyle{alpha}
+
+\begin{titlepage}
+%deckblatt start
+\thispagestyle{empty}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{HTW_Logo_rgb}\\
+%\Large{Hochschule für Technik und Wirtschaft Berlin (HTW-Berlin)}\\
+\end{center}
+ 
+ 
+\begin{center}
+\Large{Fachbereich 4}\\
+\textbf{Studiengang Angewandte Informatik, BSc}
+\end{center}
+\begin{verbatim}
+ 
+ 
+\end{verbatim}
+\begin{center}
+\textbf{\LARGE{Pflichtenehft}}\\
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+\textbf{\Large{Sommersemester 2023}}\\
+\end{center}
+
+ 
+\begin{flushleft}
+\begin{tabular}{lll}
+& & \\
+\textbf{Thema:} & & Softwareprojekt "Mastermind"\\
+& & \\
+& & \\
+\textbf{Ansprechpartner:} & & Prof. Dr. Salinger\\
+& & \\
+& & \\
+& & \\
+\textbf{eingereicht von:} 	& & Adrian Urbanek, 563284\\
+& & \\
+& & \\
+& & \\
+& & \\
+%%\textbf{eingereicht am:} & & \today \\
+\text{Berlin, den \today}\\
+& & \\
+& & \\
+& & \\
+& & \\
+& & \\
+\hspace*{\fill}\begin{tabular}{@{}l@{}}\hline
+\makebox[6cm]{Praktikant/in}
+\end{tabular}
+&   &
+\hspace*{\fill}\begin{tabular}{@{}l@{}}\hline
+\makebox[6cm]{Betreuer/in}
+\end{tabular}
+\end{tabular}
+\end{flushleft}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Zielbestimmung}
+\begin{itemize}
+	\item Das Ziel dieses Projekts ist die Softwareentwicklung eines Mastermind-Spiels mit grafischer Oberfläche auf einer Python3-Laufzeitumgebung
+\end{itemize}
+\subsection{Musskriterien}
+\begin{itemize}
+	\item Objektorientierte Implementierung der Software in der Programmierumgebung \textit{python3} 
+	\item Applikation mit grafischer Oberfläche (GUI) 
+	\item Auswahl der Spielmodi \textit{Codemaker} und \textit{Codebreaker}
+	\item Einfache Handhabung der Applikation 
+	\item Ausführbarkeit der Applikation auf allen gängigen Betriebssystemen (Mac, Windows, Linux)
+\end{itemize}
+\subsection{Wunschkriterien}
+\begin{itemize}
+	\item Grafische Oberfläche im Retro-Design
+	\item Zeitangabe, wie lange ein Spiel gedauert hat
+\end{itemize}
+\subsection{Abgrenzungskriterien}
+\begin{itemize}
+	\item Spielmodus ausschließlich Human vs. Computer
+	\item Software soll keine Webapplikation sein
+	\item Nur ein festgelegter Schwierigkeitsgrad
+	\item Plattformunterstützung nur für Heimcomputer und Laptops
+	\item Die Speicherung eines Spielstands ist nicht nötig
+\end{itemize}
+\section{Produkteinsatz}
+\subsection{Anwendungsbereiche}
+\begin{itemize}
+    \item Unterhaltung und Freizeit
+    \item Das Produkt ist für den privaten Gebrauch am Heimcomputer/Laptop vorgesehen.
+\end{itemize}
+\subsection{Zielgruppen}
+\begin{itemize}
+    \item Alle Personen der Altersgruppe 6 bis 40 mit Affinität für Computerspiele und Spaß an logischen Rätseln.
+\end{itemize}
+
+\subsection{Betriebsbedingungen}
+\begin{itemize}
+    \item Funktionsfähige Python3-Laufzeitumgebung 
+    \item Heimcomputer oder Laptop
+\end{itemize}
+\section{Produktübersicht}
+Das Spiel soll durch Ausführung einer Installationsdatei auf einer entsprechenden
+Betriebssystemumgebung mit den benötigten Paketen/Abhängigkeiten installiert werden.
+Hierzu sollte eine Internetverbindung am Endgerät bestehen, um diese Abhängigkeiten
+herunterladen zu können. Es werden keine Administratorrechte für die Installation nötig sein.
+Sobald das Spiel erfolgreich installiert wurde, kann es vom Nutzer ausgeführt werden.
+(siehe Use-Case-Diagramm)
+\subsection{Spielablauf}
+\begin{itemize}
+    \item Der Codemaker wählt eine geheime Kombination aus Farben und Positionen.
+    \item Der Codebreaker versucht genau diese Kombination und Farbfolge zu erraten.
+    \item Der Codemaker gibt Feedback über die Übereinstimmung des Rateversuchs über ein weißes Stäbchen (richtige Kugel an falscher Stelle) oder ein schwarzes (richtige Kugel an richtiger Stelle).
+    \item Welche Kugeln richtig liegen, wird dem Codebreaker nicht verraten.
+    \item Dieser Prozess wird wiederholt, bis entweder die geheime Kombination erraten oder die maximale Anzahl von Zügen erreicht wurde.
+\end{itemize}
+\section{Produktfunktionen}
+\begin{itemize}
+    \item Installation/Deinstallation der Anwendung durch den Benutzer
+    \item Starten/Beenden der Anwendung durch den Benutzer
+    \item Starten/Beenden einer Spielrunde
+    \item Auswahl des Spielmodus Codemaker/Codebreaker im Hauptmenü der Anwendung
+    \item Hilfestellung zum Spiel durch Tooltips in der Anwendung
+    \item Zeitangabe zur Dauer eines Spiels
+\end{itemize}
+\section{Produktdaten}
+(Siehe Objektdiagramm)
+\section{Produktleistungen}
+???
+\section{Qualitätsanforderungen}
+\begin{itemize}
+    \item Das Programm soll keine Prozessabstürze verursachen.
+    \item Bedienfehler sollen auf intuitive Weise abgefangen werden.
+    \item Dokumentation soll erstellt werden.
+\end{itemize}
+\section{Benutzeroberfläche}
+\begin{itemize}
+    \item Das Spiel soll ein Hauptmenü mit Spielstart, Beenden der Anwendung und Auswahl des Spielmodus beinhalten.
+    \item Die Benutzeroberfläche soll benutzerfreundlich und intuitiv sein.
+    \item Die Darstellung der zu erratenen Kugeln wird durch farbige Kreise erfolgen.
+\end{itemize}
+\section{Nichtfunktioniale Anforderungen}
+\begin{itemize}
+    \item Plattformunabhängigkeit: Das Spiel soll auf verschiedenen Betriebssystemen (Windows, macOS, Linux) lauffähig sein.
+    \item Benutzerfreundlichkeit: Die Benutzeroberfläche soll intuitiv und einfach zu bedienen sein, auch für unerfahrene Benutzer.
+    \item Sicherheit: Das Spiel soll keine Sicherheitsrisiken aufweisen
+    \item Wartbarkeit: Der Code soll gut strukturiert, dokumentiert und wartungsfreundlich sein, um zukünftige Änderungen und Erweiterungen zu erleichtern.
+\end{itemize}
+\section{Technische Produktumgebung}
+\begin{itemize}
+    \item Progammiersprache: Python 3
+    \item Verwendung des GUI-Frameworks "Pygame"
+    \item Ggf. Ausführung in virtuellen Python-Umgebung (venv)
+\end{itemize}
+\section{Spezielle Anforderungen and die Entwicklungsumgebung}
+\begin{itemize}
+    \item Visuelle Darstellung des Projekt-Workflows durch das Tool "Trello"
+    \item Versionierung und gemeinsame Nutzung des Quellcodes über geeignete Tools (z. B. Git, Htw-GitLab)
+    \item Pairprogramming für die Implementierung der Software
+\end{itemize}
+\section{Ergänzungen}
+
+
+
+
+\end{document}

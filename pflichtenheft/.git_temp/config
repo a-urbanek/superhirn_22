@@ -1,0 +1,13 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "se2"]
+	url = git@gitlab.rz.htw-berlin.de:s0585012/sose23_superhirn_22.git
+	fetch = +refs/heads/*:refs/remotes/se2/*
+[branch "main"]
+	remote = se2
+	merge = refs/heads/main
