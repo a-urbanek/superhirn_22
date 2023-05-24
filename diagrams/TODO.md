@@ -5,5 +5,8 @@
 - Aktivitätsdiagramm überarbeiten (Schritte vereinfachen)
 - Prüfen, ob Diagramme den Standards genügen
 
-## Objectdiagramm:
+## Objekt-/Klassendiagramm:
+- (folgt)
+
+## Sequenzdiagramm:
 - (folgt)
