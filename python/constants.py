@@ -1,0 +1,2 @@
+MENU = "menu"
+GAME = "game"
