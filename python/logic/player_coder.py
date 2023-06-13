@@ -11,3 +11,6 @@ class PlayerCoder:
         #   - Überprüfen, ob die Eingabe erstmal theoretisch möglich ist
         #   - bedeutet weiße und schwarze pins setzen...
         return
+
+    def generate_code(self):
+        return

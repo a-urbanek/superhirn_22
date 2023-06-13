@@ -1,6 +1,6 @@
 import numpy as np
 
-from config import config
+from python.config import config
 
 player_is_guesser = True
 current_row = 9 # unterste Reihe bei 10 Reihen

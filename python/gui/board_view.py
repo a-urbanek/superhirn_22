@@ -1,5 +1,5 @@
 import pygame
-from config import config
+import python.config.config as config
 import pygame_gui
 
 class BoardView:
@@ -30,6 +30,9 @@ class BoardView:
         self.button_text = "Button"
         self.button_font = pygame.font.Font(None, 24)
 
+        # Feedback-Kugeln
+        self.feedback_balls = [[None] * config.FEEDBACK_COLUMNS for _ in range(config.FEEDBACK_ROWS)]
+
     def draw(self):
         """
         Zeichnet das Spielbrett auf den Bildschirm.
@@ -37,11 +40,30 @@ class BoardView:
         # UI-Elemente zeichnen
         self.gui_manager.draw_ui(self.screen)
 
+        # Rahmen um das Spielfeld zeichnen
+        board_rect = pygame.Rect(
+            config.CELL_SIZE // 2 + config.GAP_SIZE,
+            config.CELL_SIZE // 2 + config.GAP_SIZE,
+            config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
+            (config.ROWS - 1) * (config.CELL_SIZE + config.GAP_SIZE)
+        )
+        pygame.draw.rect(self.screen, (255, 0, 0), board_rect, 3)
+
+        # Rahmen um die Feedback-Kugeln zeichnen
+        feedback_rect = pygame.Rect(
+            (config.COLUMNS + 1) * (config.CELL_SIZE + config.GAP_SIZE),
+            config.CELL_SIZE // 2 + config.GAP_SIZE,
+            config.FEEDBACK_COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
+            config.FEEDBACK_ROWS * (config.CELL_SIZE + config.GAP_SIZE)
+        )
+        pygame.draw.rect(self.screen, (0, 0, 255), feedback_rect, 3)
+
+
         # Zeichnen der leeren Zellen des Spielbretts
         for row in range(config.ROWS - 1):
             for column in range(config.COLUMNS):
-                cell_x = column * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE
-                cell_y = row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE
+                cell_x = column * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE * 6.5
+                cell_y = row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE * 6.5
                 radius = config.CELL_SIZE // 2
                 pygame.draw.circle(
                     self.screen,
@@ -85,6 +107,31 @@ class BoardView:
                         (cell_x, cell_y),
                         radius
                     )
+
+        # Zeichnen der Feedback-Kugeln
+        feedback_start_x = (config.COLUMNS + 1) * (config.CELL_SIZE + config.GAP_SIZE)
+        feedback_start_y = (config.ROWS - 1) * (config.CELL_SIZE + config.GAP_SIZE)
+        feedback_cell_size = config.CELL_SIZE // 2
+        feedback_gap_size = config.GAP_SIZE // 2
+
+        for row in range(config.FEEDBACK_ROWS):
+            for column in range(config.FEEDBACK_COLUMNS):
+                cell_x = feedback_start_x + column * (feedback_cell_size + feedback_gap_size) + feedback_cell_size // 2
+                cell_y = feedback_start_y + row * (feedback_cell_size + feedback_gap_size) + feedback_cell_size // 2
+
+                pygame.draw.circle(
+                    self.screen,
+                    config.CELL_COLOR,
+                    (cell_x, cell_y),
+                    feedback_cell_size // 2
+                )
+                pygame.draw.circle(
+                    self.screen,
+                    config.BORDER_COLOR,
+                    (cell_x, cell_y),
+                    feedback_cell_size // 2,
+                    config.BORDER_WIDTH
+                )
 
         # Zeichnen des Buttons
         pygame.draw.rect(self.screen, self.button_color, self.button_rect)
@@ -146,7 +193,7 @@ class BoardView:
         :return: Die ausgewählte Farbe
         """
         for i, color in enumerate(config.COLORS):
-            circle_x = (i + 0.5) * config.CELL_SIZE
+            circle_x = (i + 0.5) * (config.CELL_SIZE + config.GAP_SIZE)
             circle_y = (config.ROWS - 0.5) * (config.CELL_SIZE + config.GAP_SIZE) + 0.5 * config.CELL_SIZE
             circle_radius = config.CELL_SIZE // 2
             if (

@@ -1,14 +1,18 @@
 # Konfigurationen
-ROWS = 11  # Eine zusätzliche Reihe für die Farben
+ROWS = 10  # Eine zusätzliche Reihe für die Farben
 COLUMNS = 5
 CELL_SIZE = 50
 GAP_SIZE = 5
-HEIGHT = ROWS * (CELL_SIZE + GAP_SIZE) + CELL_SIZE
+HEIGHT = ROWS * (CELL_SIZE + GAP_SIZE) + 2 * (CELL_SIZE + GAP_SIZE)
 CELL_COLOR = (169, 169, 169)
 BORDER_COLOR = (0, 0, 0)
 BORDER_WIDTH = 2
+FEEDBACK_COLUMNS = 2
+FEEDBACK_ROWS = ROWS * 2
+FEEDBACK_CELL_SIZE = CELL_SIZE
+FEEDBACK_GAP_SIZE = GAP_SIZE
 COLORS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
-WIDTH = max(COLUMNS * (CELL_SIZE + GAP_SIZE), (len(COLORS) + 1) * (CELL_SIZE + GAP_SIZE))
+WIDTH = (COLUMNS + 3) * (CELL_SIZE + GAP_SIZE)
 FPS = 60
 
 button_width = 100  # Breite des Buttons

@@ -62,26 +62,6 @@ class MainApp:
         if game_config.computer_is_playing == False:
             self.player.make_move()
 
-        #
-        # allColorsAreSelected = True
-        #
-        # is_equal = np.array_equal(game_config.board_guess[game_config.current_row], np.array(game_config.solution))
-        #
-        # print(is_equal)
-        # print(game_config.board_guess[game_config.current_row])
-        # print(game_config.solution)
-        #
-        # if is_equal:
-        #     print("Gewonnen!")
-        #
-        # for element in game_config.board_guess[game_config.current_row]:
-        #     if element is None:
-        #         allColorsAreSelected = False
-        #
-        # if allColorsAreSelected:
-        #     print("Row complete")
-        #     game_config.current_row -= 1
-
     def color_cell(self, board_view, row, column, color):
         """
         Färbt eine Zelle in Abhängigkeit von ihrer Zeilennummer ein.
@@ -97,7 +77,6 @@ class MainApp:
             board_view.board[row][column] = color
 
     def run(self):
-
         # Bildschirm mit einer Hintergrundfarbe füllen
         self.screen.fill((244, 244, 244))
 
@@ -105,15 +84,12 @@ class MainApp:
         Startet die Hauptschleife der Anwendung.
         """
         while True:
-            if (self._state == MENU):
-
+            if self._state == MENU:
                 for event in pygame.event.get():
                     self.menu_controller.handle_event(event)
                     self.menu_view.draw()
 
-
-            elif (self._state == GAME):
-
+            elif self._state == GAME:
                 if game_config.computer_is_playing:
                     self.computer.rate_moe()
 
@@ -130,32 +106,19 @@ class MainApp:
                         # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus
                         mouse_pos = pygame.mouse.get_pos()
                         self.board_view.drop(mouse_pos)
-                        # Ereignisschleife zum Abfragen von Ereignissen
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                pygame.quit()
-                                return
-                            elif event.type == pygame.MOUSEBUTTONDOWN:
-                                # Wenn eine Maustaste gedrückt wird, starte das Drag-Event mit der aktuellen Mausposition
-                                mouse_pos = pygame.mouse.get_pos()
-                                self.board_view.start_drag(mouse_pos)
-                            elif event.type == pygame.MOUSEBUTTONUP:
-                                # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus
-                                mouse_pos = pygame.mouse.get_pos()
-                                self.board_view.drop(mouse_pos)
 
-                        # Bildschirm mit einer Hintergrundfarbe füllen
-                        self.screen.fill((0, 0, 0))
+                # Bildschirm mit einer Hintergrundfarbe füllen
+                self.screen.fill((0, 0, 0))
 
-                        # Aktualisieren und Zeichnen des Spielbretts
-                        self.board_view.update()
-                        self.board_view.draw()
+                # Aktualisieren und Zeichnen des Spielbretts
+                self.board_view.update()
+                self.board_view.draw()
 
-                        # Bildschirm aktualisieren
-                        pygame.display.flip()
+                # Bildschirm aktualisieren
+                pygame.display.flip()
 
-                        # Begrenzung der Framerate
-                        self.clock.tick(config.FPS)
+                # Begrenzung der Framerate
+                self.clock.tick(config.FPS)
 
 
 if __name__ == '__main__':
