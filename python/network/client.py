@@ -24,7 +24,7 @@ def send_request(gameid, gamerid, positions, colors, value):
     """
 
     global response
-    url = f"http://{IP_ADDRESS}:{PORT}"
+    url = "http://{}:{}".format(IP_ADDRESS, PORT)
 
     data = {
         "gameid": gameid,
