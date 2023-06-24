@@ -2,9 +2,11 @@ import numpy as np
 
 from config import config
 
-player_is_guesser = True
+player_is_guesser = False
 current_row = 9 # unterste Reihe bei 10 Reihen
 computer_is_playing = False
+
+code_is_coded = False
 
 solution = np.empty(config.COLUMNS, dtype=object)
 solution[0] = (255, 0, 0)

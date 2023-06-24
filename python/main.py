@@ -59,11 +59,12 @@ class MainApp:
         Wenn ja, wird die Meldung "Row complete" ausgegeben und die aktuelle Reihe verringert.
         """
 
+        game_config.code_is_coded = True
+
         if game_config.computer_is_playing == False:
             self.player.make_move()
 
-    def color_cell(self, board_view, row, column, color):
-        print(row, column, color)
+    def color_cell(self, board_view, row, column, color, isLeftBoard):
         """
         Färbt eine Zelle in Abhängigkeit von ihrer Zeilennummer ein.
         Wenn die Zeilennummer mit der aktuellen Reihe übereinstimmt und der Spieler der Rater ist,
@@ -73,6 +74,11 @@ class MainApp:
         :param column: Die Spaltennummer der Zelle
         :param color: Die Farbe, mit der die Zelle eingefärbt werden soll
         """
+        if color == None:
+            return
+
+        print(row, column, color, isLeftBoard)
+
         if row == game_config.current_row and game_config.player_is_guesser:
             game_config.board_guess[row, column] = color
             board_view.board[row][column] = color

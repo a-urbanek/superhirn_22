@@ -1,6 +1,9 @@
 import pygame
-import config.config as config
 import pygame_gui
+
+import config.config as config
+import config.game_config as game_config
+
 
 class BoardView:
     def __init__(self, screen, color_cell_handler, button_callback):
@@ -17,15 +20,18 @@ class BoardView:
         self.dragged_color = None
         self.start_pos = (0, 0)
         self.current_pos = (0, 0)
+        self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
 
         # Initialisierung des Spielbretts
         self.board = [[None] * config.COLUMNS for _ in range(config.ROWS)]
+        self.board_feedback = [[None] * config.COLUMNS for _ in range(config.ROWS)]
 
         # GUI-Manager erstellen
         self.gui_manager = pygame_gui.UIManager(screen.get_size())
 
         # Button-Parameter
-        self.button_rect = pygame.Rect(len(config.COLORS) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, 100, 50)
+        self.button_rect = pygame.Rect(len(self.used_colors) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
+                                       config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, 100, 50)
         self.button_color = (255, 0, 0)
         self.button_text = "Button"
         self.button_font = pygame.font.Font(None, 24)
@@ -39,6 +45,8 @@ class BoardView:
         """
         # UI-Elemente zeichnen
         self.gui_manager.draw_ui(self.screen)
+
+        self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
 
         # Rahmen um das Spielfeld zeichnen
         board_rect = pygame.Rect(
@@ -60,7 +68,6 @@ class BoardView:
 
         pygame.draw.rect(self.screen, (0, 0, 255), feedback_rect, 3)
 
-
         # Zeichnen der leeren Zellen des Spielbretts
         for row in range(config.ROWS):
             for column in range(config.COLUMNS):
@@ -80,9 +87,40 @@ class BoardView:
                     radius,
                     config.BORDER_WIDTH
                 )
+        # Zeichnen der schwarzen und weißen Pins
+        x_start_feedback = config.COLUMNS * (
+                config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN + config.FEEDBACK_CELL_SIZE // 2
+        y_start_feedback = config.MARGIN + config.CELL_SIZE // 2
+        for row in range(config.ROWS):
+            if (row != 0):
+                for column in range(config.COLUMNS):
+                    cell_x = x_start_feedback + column * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE)
+                    cell_y = y_start_feedback + row * (config.CELL_SIZE + config.GAP_SIZE)
+                    radius = config.FEEDBACK_CELL_SIZE // 2
+                    pygame.draw.circle(
+                        self.screen,
+                        (200, 200, 200),
+                        (cell_x, cell_y),
+                        radius
+                    )
+
+        # Zeichnen der bereits eingefärbten Zellen
+        for row in range(config.ROWS):
+            if (row != 0):
+                for column in range(config.COLUMNS):
+                    if self.board_feedback[row][column] is not None:
+                        cell_x = x_start_feedback + column * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE)
+                        cell_y = y_start_feedback + row * (config.CELL_SIZE + config.GAP_SIZE)
+                        radius = config.FEEDBACK_CELL_SIZE // 2
+                        pygame.draw.circle(
+                            self.screen,
+                            self.board_feedback[row][column],
+                            (cell_x, cell_y),
+                            radius
+                        )
 
         # Zeichnen der Farbzellen
-        for i, color in enumerate(config.COLORS):
+        for i, color in enumerate(self.used_colors):
             circle_x = i * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
             circle_y = (config.ROWS) * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN * 2
             circle_radius = config.CELL_SIZE // 2
@@ -109,29 +147,6 @@ class BoardView:
                         (cell_x, cell_y),
                         radius
 
-                    )
-
-        # Zeichnen der schwarzen und weißen Pins
-        x_start = config.COLUMNS * config.CELL_SIZE + config.COLUMNS * config.GAP_SIZE + config.MARGIN
-        y_start = 0
-        for row in range(config.ROWS):
-            if (row != 0):
-                for column in range(config.COLUMNS):
-                    cell_x = x_start + column * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
-                    cell_y = y_start + row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
-                    radius = config.FEEDBACK_CELL_SIZE // 2
-                    pygame.draw.circle(
-                        self.screen,
-                        (200, 200, 200),
-                        (cell_x, cell_y),
-                        radius
-                    )
-                    pygame.draw.circle(
-                        self.screen,
-                        config.BORDER_COLOR,
-                        (cell_x, cell_y),
-                        radius,
-                        config.BORDER_WIDTH
                     )
 
         # Zeichnen des Buttons
@@ -161,9 +176,9 @@ class BoardView:
             self.button_callback(self)
         else:
             # Einfärben der Zelle, wenn sie im Spielbrettbereich liegt
-            drop_row, drop_column = self.get_clicked_cell(drop_pos)
+            drop_row, drop_column, isLeftBoard = self.get_clicked_cell(drop_pos)
             if drop_row is not None and drop_column is not None:
-                self.color_cell_handler(self, drop_row, drop_column, self.dragged_color)
+                self.color_cell_handler(self, drop_row, drop_column, self.dragged_color, isLeftBoard)
         self.dragging = False
 
     def update(self):
@@ -181,11 +196,34 @@ class BoardView:
         :param mouse_pos: Die aktuelle Mausposition
         :return: Die Zeilen- und Spaltennummer der angeklickten Zelle
         """
-        column = mouse_pos[0] // (config.CELL_SIZE + config.GAP_SIZE)
-        row = mouse_pos[1] // (config.CELL_SIZE + config.GAP_SIZE)
-        if row < config.ROWS - 1 and column < config.COLUMNS:
-            return row, column
-        return None, None
+        x, y = mouse_pos
+        margin = config.MARGIN
+        cell_size = config.CELL_SIZE
+        gap_size = config.GAP_SIZE
+        feedback_cell_size = config.FEEDBACK_CELL_SIZE
+        columns = config.COLUMNS
+        rows = config.ROWS
+        is_left = True
+
+        column = 0  # Standardwert
+        row = 0  # Standardwert
+
+        if margin <= x <= margin + columns * (cell_size + gap_size) and margin <= y <= rows * (
+                cell_size + gap_size) + margin:
+            updated_x_position = x - margin
+            updated_y_position = y - margin
+            column = updated_y_position // (cell_size + gap_size)
+            row = updated_x_position // (cell_size + gap_size)
+        elif 2 * margin + columns * (cell_size + gap_size) <= x <= 2 * margin + columns * (
+                cell_size + gap_size + feedback_cell_size + config.FEEDBACK_GAP_SIZE) and \
+                margin + cell_size + gap_size <= y <= rows * (cell_size + gap_size) + margin:
+            is_left = False
+            updated_x_position = x - 2 * margin - columns * (cell_size + gap_size)
+            updated_y_position = y - margin - cell_size - gap_size
+            column = updated_x_position // (feedback_cell_size + gap_size)
+            row = updated_y_position // (cell_size + gap_size)
+
+        return row, column, is_left
 
     def get_clicked_color(self, mouse_pos):
         """
@@ -193,13 +231,13 @@ class BoardView:
         :param mouse_pos: Die aktuelle Mausposition
         :return: Die ausgewählte Farbe
         """
-        for i, color in enumerate(config.COLORS):
-            circle_x = (i + 0.5) * (config.CELL_SIZE + config.GAP_SIZE)
-            circle_y = (config.ROWS - 0.5) * (config.CELL_SIZE + config.GAP_SIZE) + 0.5 * config.CELL_SIZE
+        for i, color in enumerate(self.used_colors):
+            circle_x = i * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
+            circle_y = (config.ROWS) * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN * 2
             circle_radius = config.CELL_SIZE // 2
             if (
-                circle_x - circle_radius <= mouse_pos[0] <= circle_x + circle_radius and
-                circle_y - circle_radius <= mouse_pos[1] <= circle_y + circle_radius
+                    circle_x - circle_radius <= mouse_pos[0] <= circle_x + circle_radius and
+                    circle_y - circle_radius <= mouse_pos[1] <= circle_y + circle_radius
             ):
                 return color
         return None
