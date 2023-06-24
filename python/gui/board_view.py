@@ -1,5 +1,5 @@
 import pygame
-import python.config.config as config
+import config.config as config
 import pygame_gui
 
 class BoardView:
@@ -110,15 +110,17 @@ class BoardView:
 
         # Zeichnen der Feedback-Kugeln
         # TODO: Feedback-Kugeln in 2x2 Blöcke zusammenfasssen und den Gap der Blöcke erhöhen
-        feedback_start_x = (config.COLUMNS + 1 * 1.5) * (config.CELL_SIZE + config.GAP_SIZE)
-        feedback_start_y = (config.ROWS - 1 * 9.3) * (config.CELL_SIZE + config.GAP_SIZE)
+        feedback_start_x = (config.COLUMNS + 1 * 1.5) * (config.CELL_SIZE + config.CELL_SIZE) - 300
+        feedback_start_y = (config.ROWS - 1 * 9.3) * (config.CELL_SIZE + config.GAP_SIZE) - 30
         feedback_cell_size = config.CELL_SIZE // 2
         feedback_gap_size = config.GAP_SIZE // 2
 
         for row in range(config.FEEDBACK_ROWS):
             for column in range(config.FEEDBACK_COLUMNS):
-                cell_x = feedback_start_x + column * (feedback_cell_size + feedback_gap_size) + feedback_cell_size // 2
-                cell_y = feedback_start_y + row * (feedback_cell_size + feedback_gap_size) + feedback_cell_size // 2
+                cell_x = feedback_start_x + column * (config.CELL_SIZE + config.CELL_SIZE) + config.CELL_SIZE // 2
+                cell_x = feedback_start_x + column * (config.CELL_SIZE * 0.5)
+                cell_y = feedback_start_y + row * (config.CELL_SIZE + config.CELL_SIZE) + config.CELL_SIZE // 2
+                cell_y = feedback_start_y + row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE
 
                 pygame.draw.circle(
                     self.screen,

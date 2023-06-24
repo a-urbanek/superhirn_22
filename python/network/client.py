@@ -1,8 +1,11 @@
 import requests
 import json
 
-IP_ADDRESS = "127.0.0.1"
-PORT = 8000
+IP_ADDRESS = "141.45.36.52"
+PORT = 5001
+
+# IP_ADDRESS = "127.0.0.1"
+# PORT = 8000
 
 
 def send_request(gameid, gamerid, positions, colors, value):
@@ -38,6 +41,7 @@ def send_request(gameid, gamerid, positions, colors, value):
 
     try:
         # Send POST request to the server
+        # print(json.dumps(data))
         response = requests.post(url, data=json.dumps(data), headers=headers)
         response_data = response.json()
         response.raise_for_status()
@@ -75,16 +79,16 @@ def send_request(gameid, gamerid, positions, colors, value):
 
 
 # Example usage
-gameid = 0
+gameid = 52342485
 gamerid = "Friedrich"
 positions = 6
-colors = 6
-value = ""
+colors = 4
+value = "123456"
 
 # Send multiple requests
 gameid = send_request(gameid, gamerid, positions, colors, value)
-gameid = send_request(gameid, gamerid, positions, colors, value)
-gameid = send_request(gameid, gamerid, positions, colors, value)
-gameid = send_request(gameid, gamerid, positions, colors, value)
-gameid = send_request(gameid, gamerid, positions, colors, value)
-gameid = send_request(gameid, gamerid, positions, colors, value)
+# gameid = send_request(gameid, gamerid, positions, colors, value)
+# gameid = send_request(gameid, gamerid, positions, colors, value)
+# gameid = send_request(gameid, gamerid, positions, colors, value)
+# gameid = send_request(gameid, gamerid, positions, colors, value)
+# gameid = send_request(gameid, gamerid, positions, colors, value)

@@ -63,6 +63,7 @@ class MainApp:
             self.player.make_move()
 
     def color_cell(self, board_view, row, column, color):
+        print(row, column, color)
         """
         Färbt eine Zelle in Abhängigkeit von ihrer Zeilennummer ein.
         Wenn die Zeilennummer mit der aktuellen Reihe übereinstimmt und der Spieler der Rater ist,
