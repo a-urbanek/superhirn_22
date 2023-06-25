@@ -1,4 +1,5 @@
 from .command import Command
+from config import game_config
 
 import sys
 sys.path.insert(0, '..')
@@ -16,7 +17,9 @@ class PlayAsCodeMakerCommand(Command):
         main application
         """
         print("Playing as CodeMaker")
+        game_config.player_is_guesser = False
         main_app._state = GAME
+        # main_app._player_guesser_state = True
 
     def __str__(self):
         return "Play as CodeMaker"

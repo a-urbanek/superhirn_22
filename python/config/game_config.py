@@ -2,7 +2,7 @@ import numpy as np
 
 from config import config
 
-player_is_guesser = False
+player_is_guesser = None
 current_row = 9 # unterste Reihe bei 10 Reihen
 computer_is_playing = False
 
@@ -20,3 +20,4 @@ board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
 
 # Erstellen des Boards mit allen logisch sinnvollen Eingaben
 board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)

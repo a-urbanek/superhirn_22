@@ -80,13 +80,7 @@ class BoardView:
                     (cell_x, cell_y),
                     radius
                 )
-                pygame.draw.circle(
-                    self.screen,
-                    config.BORDER_COLOR,
-                    (cell_x, cell_y),
-                    radius,
-                    config.BORDER_WIDTH
-                )
+
         # Zeichnen der schwarzen und weißen Pins
         x_start_feedback = config.COLUMNS * (
                 config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN + config.FEEDBACK_CELL_SIZE // 2
@@ -99,7 +93,7 @@ class BoardView:
                     radius = config.FEEDBACK_CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
-                        (200, 200, 200),
+                        config.CELL_COLOR,
                         (cell_x, cell_y),
                         radius
                     )
@@ -138,8 +132,8 @@ class BoardView:
         for row in range(config.ROWS):
             for column in range(config.COLUMNS):
                 if self.board[row][column] is not None:
-                    cell_x = column * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE
-                    cell_y = row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.GAP_SIZE
+                    cell_x = column * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
+                    cell_y = row * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
                     radius = config.CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
@@ -212,8 +206,8 @@ class BoardView:
                 cell_size + gap_size) + margin:
             updated_x_position = x - margin
             updated_y_position = y - margin
-            column = updated_y_position // (cell_size + gap_size)
-            row = updated_x_position // (cell_size + gap_size)
+            row = updated_y_position // (cell_size + gap_size)
+            column = updated_x_position // (cell_size + gap_size)
         elif 2 * margin + columns * (cell_size + gap_size) <= x <= 2 * margin + columns * (
                 cell_size + gap_size + feedback_cell_size + config.FEEDBACK_GAP_SIZE) and \
                 margin + cell_size + gap_size <= y <= rows * (cell_size + gap_size) + margin:

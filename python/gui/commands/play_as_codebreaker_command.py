@@ -1,3 +1,4 @@
+from config import game_config
 from .command import Command
 
 import sys
@@ -15,7 +16,9 @@ class PlayAsCodeBreakerCommand(Command):
         main application
         """
         print("Playing as CodeBreaker")
+        game_config.player_is_guesser = True
         main_app._state = GAME
+        # main_app._player_guesser_state = False
 
     def __str__(self):
         return "Play as CodeBreaker"
