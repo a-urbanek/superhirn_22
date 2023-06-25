@@ -235,9 +235,7 @@ class BoardView:
             circle_x = i * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
             circle_y = (config.ROWS) * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN * 2
             circle_radius = config.CELL_SIZE // 2
-            if (
-                    circle_x - circle_radius <= mouse_pos[0] <= circle_x + circle_radius and
-                    circle_y - circle_radius <= mouse_pos[1] <= circle_y + circle_radius
-            ):
+            if circle_x - circle_radius <= mouse_pos[0] <= circle_x + circle_radius and circle_y - circle_radius <= \
+                    mouse_pos[1] <= circle_y + circle_radius:
                 return color
         return None
