@@ -32,6 +32,9 @@ class BoardView:
         # Button-Parameter
         self.button_rect = pygame.Rect(len(self.used_colors) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
                                        config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, 100, 50)
+
+        self.textfield_rect = pygame.Rect(config.MARGIN, (config.ROWS + 2) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.WIDTH - 2 * config.MARGIN, 200)
+
         self.button_color = (255, 0, 0)
         self.button_text = "Button"
         self.button_font = pygame.font.Font(None, 24)
@@ -108,7 +111,7 @@ class BoardView:
                         radius = config.FEEDBACK_CELL_SIZE // 2
                         pygame.draw.circle(
                             self.screen,
-                            (0,0,0) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][column],
+                            (255,225,225) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][column],
                             (cell_x, cell_y),
                             radius
                         )
@@ -137,7 +140,7 @@ class BoardView:
                     radius = config.CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
-                        self.board[row][column],
+                        (0,0,0) if row == 0 and not game_config.game_is_over and game_config.player_is_guesser else self.board[row][column],
                         (cell_x, cell_y),
                         radius
 
@@ -148,6 +151,21 @@ class BoardView:
         button_text_surface = self.button_font.render(self.button_text, True, (255, 255, 255))
         button_text_rect = button_text_surface.get_rect(center=self.button_rect.center)
         self.screen.blit(button_text_surface, button_text_rect)
+
+        # Zeichnen des Textfelds
+        textfield_color = (0, 0, 0)
+        textfield_font = pygame.font.SysFont(None, 50)
+        text = "Beispieltext"
+        textfield_text_color = (0, 0, 0)
+        textfield_border_width = 2
+        textfield_padding = 5
+
+        # Zeichnen des Textfelds
+        pygame.draw.rect(self.screen, textfield_color, self.textfield_rect, textfield_border_width)
+        text_surface = textfield_font.render(text, True, textfield_text_color)
+        text_rect = text_surface.get_rect(topleft=(self.textfield_rect.x + textfield_padding,
+                                                   self.textfield_rect.y + textfield_padding))
+        self.screen.blit(text_surface, text_rect)
 
     def start_drag(self, start_pos):
         """

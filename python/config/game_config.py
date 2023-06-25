@@ -9,11 +9,14 @@ computer_is_playing = False
 code_is_coded = False
 
 solution = np.empty(config.COLUMNS, dtype=object)
-solution[0] = (255, 0, 0)
-solution[1] = (0, 255, 0)
-solution[2] = (0, 0, 255)
-solution[3] = (255, 255, 0)
-solution[4] = (255, 0, 255)
+# solution[0] = (255, 0, 0)
+# solution[1] = (0, 255, 0)
+# solution[2] = (0, 0, 255)
+# solution[3] = (255, 255, 0)
+# solution[4] = (255, 0, 255)
+
+game_is_over = False
+player_won = False
 
 # Erstellen des Rate-Boards
 board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)

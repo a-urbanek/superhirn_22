@@ -14,17 +14,23 @@ class ComputerLocalCoder:
         """
         Bewertet den aktuellen Zug des Spielers.
         """
-        self.solution_temp = game_config.solution
-        self.current_guess = np.array(game_config.board_final[game_config.current_row])
+        print(game_config.solution)
+        self.solution_temp = game_config.solution.copy()
+        self.current_guess = np.array(game_config.board_final[game_config.current_row]).copy()
         self.red_pins = self.count_red_pins()
         self.white_pins = self.count_white_pins()
 
-        print("Number of white pins:", self.white_pins)
-        print("Number of red pins:", self.red_pins)
+        if self.red_pins is config.COLUMNS:
+            game_config.player_won = True
+            game_config.game_is_over = True
+
+        # print("Number of white pins:", self.white_pins)
+        # print("Number of red pins:", self.red_pins)
 
         # game_config.computer_is_playing = False
         # game_config.current_row -= 1
 
+        # print(game_config.solution)
         return self.red_pins, self.white_pins
 
     def count_red_pins(self):
