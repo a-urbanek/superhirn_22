@@ -35,9 +35,7 @@ class MainApp:
 
         @state.setter
         def state(self, value):
-            print(value)
             if value in [MENU, GAME]:
-                print("setting..." + value)
                 self._state = value
             else:
                 raise ValueError("Invalid view state")
@@ -103,10 +101,6 @@ class MainApp:
         Wenn ja, wird die Meldung "Row complete" ausgegeben und die aktuelle Reihe verringert.
         """
 
-        print("computer_is_playing", game_config.computer_is_playing)
-        print("code_is_coded", game_config.code_is_coded)
-        print("player_is_guesser", game_config.player_is_guesser)
-
         if not game_config.computer_is_playing:
             if not game_config.code_is_coded and not game_config.player_is_guesser:
                 row_is_correct = True
@@ -131,7 +125,6 @@ class MainApp:
                     game_config.computer_is_playing = True
 
             elif not game_config.player_is_guesser:
-                print(game_config.feedback_board_final[game_config.current_row - 1])
                 white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
                 black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
                 self.guesser.evaluate_feedback(black_pins, white_pins)
@@ -159,8 +152,6 @@ class MainApp:
         :param column: Die Spaltennummer der Zelle
         :param color: Die Farbe, mit der die Zelle eingefärbt werden soll
         """
-
-        print(row, column, color, isLeftBoard, game_config.current_row)
 
         if color == None:
             return
@@ -223,24 +214,10 @@ class MainApp:
                             guess = self.guesser.guess_code()
 
                             for index, item in enumerate(guess):
-                                print(index, item)
                                 self.board_view.board[game_config.current_row][index] = convert_input_to_color(item)
                                 game_config.board_guess[game_config.current_row][index] = item
                                 game_config.board_final[game_config.current_row][index] = item
                                 game_config.computer_is_playing = False
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 # Ereignisschleife zum Abfragen von Ereignissen
                 for event in pygame.event.get():

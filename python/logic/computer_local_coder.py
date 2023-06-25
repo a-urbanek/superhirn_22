@@ -19,8 +19,8 @@ class ComputerLocalCoder:
         self.red_pins = self.count_red_pins()
         self.white_pins = self.count_white_pins()
 
-        print("White Pins:", self.white_pins)
-        print("Red Pins:", self.red_pins)
+        print("Number of white pins:", self.white_pins)
+        print("Number of red pins:", self.red_pins)
 
         # game_config.computer_is_playing = False
         # game_config.current_row -= 1
@@ -57,8 +57,7 @@ class ComputerLocalCoder:
         Generiert einen zufälligen Code als Lösung für das Spiel.
         """
         solution = np.random.choice(config.COLORS_NUMBERS, size=config.COLUMNS)
-        print(solution)
         game_config.solution = solution
         game_config.code_is_coded = True
-        print("Computer created code")
+        print("Code created:", solution)
         return solution

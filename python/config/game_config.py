@@ -3,7 +3,7 @@ import numpy as np
 from config import config
 
 player_is_guesser = None
-current_row = 9 # unterste Reihe bei 10 Reihen
+current_row = config.ROWS - 1 # unterste Reihe bei 10 Reihen
 computer_is_playing = False
 
 code_is_coded = False

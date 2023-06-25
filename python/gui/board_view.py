@@ -76,7 +76,7 @@ class BoardView:
                 radius = config.CELL_SIZE // 2
                 pygame.draw.circle(
                     self.screen,
-                    config.CELL_COLOR,
+                    (0,0,0) if row == 0 and game_config.player_is_guesser else config.CELL_COLOR,
                     (cell_x, cell_y),
                     radius
                 )
@@ -108,7 +108,7 @@ class BoardView:
                         radius = config.FEEDBACK_CELL_SIZE // 2
                         pygame.draw.circle(
                             self.screen,
-                            self.board_feedback[row][column],
+                            (0,0,0) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][column],
                             (cell_x, cell_y),
                             radius
                         )
