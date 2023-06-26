@@ -4,8 +4,8 @@ import json
 IP_ADDRESS = "141.45.36.52"
 PORT = 5001
 
-# IP_ADDRESS = "127.0.0.1"
-# PORT = 8000
+IP_ADDRESS = "127.0.0.1"
+PORT = 8001
 
 
 def send_request(gameid, gamerid, positions, colors, value):
@@ -65,7 +65,7 @@ def send_request(gameid, gamerid, positions, colors, value):
             print("value:", value)
             print("")
 
-            return gameid
+            return gameid, value
 
     except requests.exceptions.RequestException as e:
         print("Error sending the request:", str(e))
@@ -75,18 +75,18 @@ def send_request(gameid, gamerid, positions, colors, value):
             if error_message:
                 print("Server error message:", error_message)
 
-    return gameid
+    return gameid, value
 
 
 # Example usage
 gameid = 52342485
 gamerid = "Friedrich"
 positions = 6
-colors = 4
+colors = 8
 value = "123456"
 
 # Send multiple requests
-gameid = send_request(gameid, gamerid, positions, colors, value)
+gameid = send_request(322, gamerid, positions, colors, "111111")
 # gameid = send_request(gameid, gamerid, positions, colors, value)
 # gameid = send_request(gameid, gamerid, positions, colors, value)
 # gameid = send_request(gameid, gamerid, positions, colors, value)

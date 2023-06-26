@@ -33,11 +33,13 @@ class BoardView:
         self.button_rect = pygame.Rect(len(self.used_colors) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
                                        config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, 100, 50)
 
-        self.textfield_rect = pygame.Rect(config.MARGIN, (config.ROWS + 2) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.WIDTH - 2 * config.MARGIN, 200)
+        self.textfield_rect = pygame.Rect(config.MARGIN, (config.ROWS + 2) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.WIDTH - 2 * config.MARGIN, config.TEXTFIELD_HEIGHT)
 
         self.button_color = (255, 0, 0)
-        self.button_text = "Button"
+        self.button_text = "Bestätigen"
         self.button_font = pygame.font.Font(None, 24)
+
+        self.textfield_text = ""
 
         # Feedback-Kugeln
         self.feedback_balls = [[None] * config.FEEDBACK_COLUMNS for _ in range(config.FEEDBACK_ROWS)]
@@ -143,7 +145,6 @@ class BoardView:
                         (0,0,0) if row == 0 and not game_config.game_is_over and game_config.player_is_guesser else self.board[row][column],
                         (cell_x, cell_y),
                         radius
-
                     )
 
         # Zeichnen des Buttons
@@ -155,14 +156,13 @@ class BoardView:
         # Zeichnen des Textfelds
         textfield_color = (0, 0, 0)
         textfield_font = pygame.font.SysFont(None, 50)
-        text = "Beispieltext"
         textfield_text_color = (0, 0, 0)
         textfield_border_width = 2
         textfield_padding = 5
 
         # Zeichnen des Textfelds
         pygame.draw.rect(self.screen, textfield_color, self.textfield_rect, textfield_border_width)
-        text_surface = textfield_font.render(text, True, textfield_text_color)
+        text_surface = textfield_font.render(self.textfield_text, True, textfield_text_color)
         text_rect = text_surface.get_rect(topleft=(self.textfield_rect.x + textfield_padding,
                                                    self.textfield_rect.y + textfield_padding))
         self.screen.blit(text_surface, text_rect)

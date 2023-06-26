@@ -1,6 +1,6 @@
 # Konfigurationen
 ROWS = 10  # Eine zusätzliche Reihe für die Farben
-ROWS = 3
+# ROWS = 3
 COLUMNS = 5
 CELL_SIZE = 50
 GAP_SIZE = 5
@@ -18,8 +18,9 @@ FEEDBACK_COLORS = [(255, 255, 255), (0, 0, 0)]
 FEEDBACK_COLORS_NUMBERS = [7,8]
 FPS = 60
 MARGIN = 30
+TEXTFIELD_HEIGHT = 100
 WIDTH = (COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE) + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE) + 3 * MARGIN) if (COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE) + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE) + 3 * MARGIN) > (3 * MARGIN + len(COLORS) * (CELL_SIZE + GAP_SIZE) + 100) else (3 * MARGIN + len(COLORS) * (CELL_SIZE + GAP_SIZE) + 100)
-HEIGHT = (ROWS + 1) * (CELL_SIZE + GAP_SIZE) + 3 * MARGIN if ((ROWS + 1) * (CELL_SIZE + GAP_SIZE) + 3 * MARGIN) > 700 else 700
+HEIGHT = ((ROWS + 1) * (CELL_SIZE + GAP_SIZE) + 5 * MARGIN + TEXTFIELD_HEIGHT) if ((ROWS + 1) * (CELL_SIZE + GAP_SIZE) + 5 * MARGIN + TEXTFIELD_HEIGHT) > 500 else 500
 
 button_width = 100  # Breite des Buttons
 button_height = 30  # Höhe des Buttons

@@ -5,15 +5,11 @@ from config import config
 player_is_guesser = None
 current_row = config.ROWS - 1 # unterste Reihe bei 10 Reihen
 computer_is_playing = False
+computer_is_network = True
 
 code_is_coded = False
 
 solution = np.empty(config.COLUMNS, dtype=object)
-# solution[0] = (255, 0, 0)
-# solution[1] = (0, 255, 0)
-# solution[2] = (0, 0, 255)
-# solution[3] = (255, 255, 0)
-# solution[4] = (255, 0, 255)
 
 game_is_over = False
 player_won = False

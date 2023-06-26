@@ -10,6 +10,7 @@ from gui.menu_view import MenuView
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder
+from logic.computer_network_coder import ComputerNetworkCoder
 from logic.player_coder import PlayerCoder
 from logic.player_guesser import PlayerGuesser
 
@@ -52,7 +53,7 @@ class MainApp:
 
     def update_roles(self):
         if game_config.player_is_guesser:
-            self.coder = ComputerLocalCoder()
+            self.coder = ComputerLocalCoder() if not game_config.computer_is_network else ComputerNetworkCoder()
             self.guesser = PlayerGuesser()
         else:
             self.coder = PlayerCoder()
@@ -161,18 +162,27 @@ class MainApp:
                     self.update_roles()
 
                 if not game_config.code_is_coded:
+                    self.board_view.textfield_text = "Lege den Code fest in \nder ersten Reihe."
                     # Es wurde noch kein Geheimcode festgelegt
                     if game_config.player_is_guesser:
                         # der Computer muss den Code festlegen
-                        self.coder.generate_code()
+                        if not game_config.computer_is_network:
+                            self.coder.generate_code()
                         # game_config.code_is_coded = True
                 else:
                     for index, color in enumerate(game_config.solution):
                         self.board_view.board[0][index] = convert_input_to_color(color)
 
                     if game_config.player_is_guesser:
+                        self.board_view.textfield_text = "Mach einen Rateversuch."
                         if game_config.computer_is_playing:
-                            red_pins, white_pins = self.coder.rate_moe()
+                            white_pins, red_pins = self.coder.rate_moe()
+
+                            if game_config.computer_is_network and game_config.game_is_over:
+                                self.board_view.textfield_text = "Spiel ist vorbei."
+                                for i in range(config.COLUMNS):
+                                    self.board_view.board[0][i] = convert_input_to_color(game_config.board_final[game_config.current_row][i])
+
                             for column in range(red_pins):
                                 self.board_view.board_feedback[game_config.current_row][column] = \
                                 config.FEEDBACK_COLORS[1]
@@ -192,6 +202,7 @@ class MainApp:
 
                     else:
                         if game_config.computer_is_playing and not game_config.game_is_over:
+                            self.board_view.textfield_text = "Bitte bewerte den Rateversuch."
                             guess = self.guesser.guess_code()
 
                             for index, item in enumerate(guess):
