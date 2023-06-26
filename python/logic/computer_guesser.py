@@ -1,12 +1,7 @@
 import random
-import matplotlib.pyplot as plt
-from config import game_config
 from config import config
 
 class ComputerGuesser:
-    # COLORS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
-    # COLORS = ['a', 'b', 'c', 'd', 'e', 'f']
-
     def __init__(self, code_length):
         self.code_length = code_length
         self.code = self.generate_code()  # Generiere den zu erratenden Code
@@ -48,7 +43,6 @@ class ComputerGuesser:
         return black_pins, white_pins
 
     def guess_code(self):
-        print(len(self.possibilities))
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """
@@ -79,64 +73,3 @@ class ComputerGuesser:
         generate_codes(config.COLORS_NUMBERS, self.code_length, [])
 
         return possibilities
-
-# game = ComputerGuesser(code_length=6)
-# attempts_list = []
-#
-# for i in range(100):
-#     if i % 10 == 0:
-#         print(i)
-#     guess = None
-#     attempts = 0
-#
-#     solution = game.generate_code()
-#     game.possibilities = game.get_all_possible_codes()
-#
-#     while guess != solution:
-#         attempts += 1
-#         guess = game.guess_code()
-#         black_pins, white_pins = game.evaluate_guess(solution)
-#         game.evaluate_feedback(black_pins, white_pins)
-#
-#     attempts_list.append(attempts)
-#
-# # Berechnung der schnellsten, langsamsten und durchschnittlichen Anzahl der Versuche
-# fastest_attempt = min(attempts_list)
-# slowest_attempt = max(attempts_list)
-# average_attempt = sum(attempts_list) / len(attempts_list)
-#
-# # Plotten des Versuchsverlaufs
-# plt.figure(figsize=(8, 6))
-# plt.hist(attempts_list, bins=range(min(attempts_list), max(attempts_list) + 2), edgecolor='black')
-# plt.xlabel('Anzahl der Versuche')
-# plt.ylabel('Häufigkeit')
-# plt.title('Verteilung der Versuche')
-# plt.grid(True)
-# plt.show()
-#
-# print("Schnellster Versuch:", fastest_attempt, "Versuche")
-# print("Langsamster Versuch:", slowest_attempt, "Versuche")
-# print("Durchschnittliche Anzahl der Versuche:", average_attempt, "Versuche")
-
-'''
-Länge = 4
-Versuche = 10000
-
-Schnellster Versuch: 1 Versuche
-Langsamster Versuch: 8 Versuche
-Durchschnittliche Anzahl der Versuche: 4.6445 Versuche
-
-Länge = 5
-Versuche = 10000
-
-Schnellster Versuch: 1 Versuche
-Langsamster Versuch: 8 Versuche
-Durchschnittliche Anzahl der Versuche: 5.069 Versuche
-
-Länge = 6
-Versuche = 1000
-
-Schnellster Versuch: 2 Versuche
-Langsamster Versuch: 8 Versuche
-Durchschnittliche Anzahl der Versuche: 5.519 Versuche
-'''

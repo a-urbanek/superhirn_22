@@ -1,6 +1,5 @@
 import numpy as np
 import pygame
-
 from config import config
 from config import game_config
 from constants import MENU, GAME
@@ -13,7 +12,6 @@ from logic.computer_local_coder import ComputerLocalCoder
 from logic.computer_network_coder import ComputerNetworkCoder
 from logic.player_coder import PlayerCoder
 from logic.player_guesser import PlayerGuesser
-
 
 class MainApp:
     def __init__(self):
@@ -29,6 +27,7 @@ class MainApp:
         # Erstellen eines Clock-Objekts zur Framerate-Steuerung
         self.clock = pygame.time.Clock()
 
+        # Property und Setter für den Zustand der Anwendung (Menü oder Spiel)
         @property
         def state(self):
             return self._state
@@ -42,16 +41,19 @@ class MainApp:
 
         self._state = MENU
 
+        # Initialisierung der Menüansicht und des Menücontrollers
         self.menu_view = MenuView(self.screen)
         self.menu_controller = MenuController(self.screen, self)
 
-        # Erstellen eines BoardView-Objekts mit dem Bildschirm und der Farbzellen-Methode
+        # Initialisierung der Boardansicht
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click)
 
+        # Initialisierung von Coder und Guesser
         self.coder = None
         self.guesser = None
 
     def update_roles(self):
+        # Aktualisierung der Rollen (Coder und Guesser) basierend auf den Spielkonfigurationen
         if game_config.player_is_guesser:
             self.coder = ComputerLocalCoder() if not game_config.computer_is_network else ComputerNetworkCoder()
             self.guesser = PlayerGuesser()
@@ -61,14 +63,14 @@ class MainApp:
 
     def handle_button_click(self, board_view):
         """
-        Die Methode, die aufgerufen wird, wenn der Button geklickt wird.
-        Überprüft, ob alle Farben in der aktuellen Reihe ausgewählt wurden.
-        Wenn ja, wird die Meldung "Row complete" ausgegeben und die aktuelle Reihe verringert.
+        Diese Methode wird aufgerufen, wenn der Button geklickt wird.
+        Sie überprüft, ob alle Farben in der aktuellen Reihe ausgewählt wurden.
+        Wenn ja, wird die entsprechende Aktion ausgeführt.
         """
 
         if not game_config.computer_is_playing:
             if not game_config.code_is_coded and not game_config.player_is_guesser:
-                # Spieler legt den Code fest
+                # Der Spieler legt den Geheimcode fest
                 row_is_correct = True
                 for column in range(config.COLUMNS):
                     if game_config.board_guess[0][column] is None:
@@ -81,7 +83,7 @@ class MainApp:
                     game_config.code_is_coded = True
 
             elif game_config.player_is_guesser:
-                # Spieler macht einen Rateversuch
+                # Der Spieler macht einen Rateversuch
                 row_is_correct = True
                 for column in range(config.COLUMNS):
                     if game_config.board_guess[game_config.current_row][column] is None:
@@ -92,11 +94,11 @@ class MainApp:
                     game_config.computer_is_playing = True
 
             elif not game_config.player_is_guesser:
-                # Spieler bewertet einen Rateversuch des Computers
+                # Der Spieler bewertet einen Rateversuch des Computers
                 white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
                 black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
 
-                # Code wurde erraten
+                # Der Geheimcode wurde erraten
                 if black_pins is config.COLUMNS:
                     game_config.player_won = True
                     game_config.game_is_over = True
@@ -112,7 +114,7 @@ class MainApp:
 
     def color_cell(self, board_view, row, column, color, isLeftBoard):
         """
-        Färbt eine Zelle in Abhängigkeit von ihrer Zeilennummer ein.
+        Diese Methode färbt eine Zelle in Abhängigkeit von ihrer Zeilennummer ein.
         Wenn die Zeilennummer mit der aktuellen Reihe übereinstimmt und der Spieler der Rater ist,
         wird die Zelle eingefärbt und die entsprechende Farbe im Rate-Board gespeichert.
         :param board_view: Das BoardView-Objekt, auf dem die Zelle eingefärbt werden soll
@@ -126,19 +128,22 @@ class MainApp:
 
         if not game_config.computer_is_playing:
             if not game_config.code_is_coded and not game_config.player_is_guesser and isLeftBoard and row == 0:
+                # Der Spieler legt den Geheimcode fest
                 game_config.board_guess[row, column] = convert_input_to_color(color)
                 board_view.board[row][column] = color
 
             elif row == game_config.current_row and game_config.player_is_guesser and isLeftBoard:
+                # Der Spieler macht einen Rateversuch
                 game_config.board_guess[row, column] = convert_input_to_color(color)
                 board_view.board[row][column] = color
 
             elif row == (game_config.current_row - 1) and not game_config.player_is_guesser and not isLeftBoard:
+                # Der Spieler bewertet einen Rateversuch des Computers
                 game_config.feedback_board_final[row, column] = convert_input_to_color(color)
                 board_view.board_feedback[row + 1][column] = color
 
     def run(self):
-        # Bildschirm mit einer Hintergrundfarbe füllen
+        # Den Bildschirm mit einer Hintergrundfarbe füllen
         self.screen.fill((244, 244, 244))
 
         """
@@ -146,50 +151,50 @@ class MainApp:
         """
         while True:
             if self._state == MENU:
+                # Menüzustand
                 for event in pygame.event.get():
                     self.menu_controller.handle_event(event)
                     self.menu_view.draw()
 
             elif self._state == GAME:
-
-                # if game_config.game_is_over:
-                    # print("Spiel ist vorbei!")
-
-                # if game_config.player_won:
-                    # print("Code wurde erraten!")
+                # Spielzustand
 
                 while self.coder is None:
                     self.update_roles()
 
                 if not game_config.code_is_coded:
+                    # Der Geheimcode wurde noch nicht festgelegt
                     self.board_view.textfield_text = "Lege den Code fest in \nder ersten Reihe."
-                    # Es wurde noch kein Geheimcode festgelegt
+
                     if game_config.player_is_guesser:
-                        # der Computer muss den Code festlegen
+                        # Der Computer muss den Geheimcode festlegen
                         if not game_config.computer_is_network:
                             self.coder.generate_code()
-                        # game_config.code_is_coded = True
+
                 else:
+                    # Der Geheimcode wurde festgelegt
                     for index, color in enumerate(game_config.solution):
                         self.board_view.board[0][index] = convert_input_to_color(color)
 
                     if game_config.player_is_guesser:
+                        # Der Spieler macht einen Rateversuch
                         self.board_view.textfield_text = "Mach einen Rateversuch."
+
                         if game_config.computer_is_playing:
                             white_pins, red_pins = self.coder.rate_moe()
 
                             if game_config.computer_is_network and game_config.game_is_over:
+                                # Das Spiel ist vorbei und der Computer hat gewonnen
                                 self.board_view.textfield_text = "Spiel ist vorbei."
                                 for i in range(config.COLUMNS):
                                     self.board_view.board[0][i] = convert_input_to_color(game_config.board_final[game_config.current_row][i])
 
+                            # Färbe die Pins entsprechend der Bewertung ein
                             for column in range(red_pins):
-                                self.board_view.board_feedback[game_config.current_row][column] = \
-                                config.FEEDBACK_COLORS[1]
+                                self.board_view.board_feedback[game_config.current_row][column] = config.FEEDBACK_COLORS[1]
 
                             for column in range(white_pins):
-                                self.board_view.board_feedback[game_config.current_row][red_pins + column] = \
-                                config.FEEDBACK_COLORS[0]
+                                self.board_view.board_feedback[game_config.current_row][red_pins + column] = config.FEEDBACK_COLORS[0]
 
                             game_config.current_row -= 1
 
@@ -197,10 +202,10 @@ class MainApp:
                                 game_config.game_is_over = True
 
                             game_config.computer_is_playing = False
-                            # print("Der Computer ist dran")
 
 
                     else:
+                        # Der Computer macht einen Rateversuch
                         if game_config.computer_is_playing and not game_config.game_is_over:
                             self.board_view.textfield_text = "Bitte bewerte den Rateversuch."
                             guess = self.guesser.guess_code()
@@ -237,7 +242,6 @@ class MainApp:
 
                 # Begrenzung der Framerate
                 self.clock.tick(config.FPS)
-
 
 if __name__ == '__main__':
     # Erstellen einer Instanz der MainApp-Klasse und Starten der Anwendung

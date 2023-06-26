@@ -9,9 +9,11 @@ class BoardView:
     def __init__(self, screen, color_cell_handler, button_callback):
         """
         Initialisiert die BoardView-Klasse.
-        :param screen: Der Pygame-Bildschirm, auf dem das Spielbrett angezeigt werden soll
-        :param color_cell_handler: Die Handler-Funktion zum Einfärben einer Zelle
-        :param button_callback: Die Callback-Funktion, die aufgerufen wird, wenn der Button geklickt wird
+
+        Args:
+            screen (pygame.Surface): Der Pygame-Bildschirm, auf dem das Spielbrett angezeigt werden soll
+            color_cell_handler (function): Die Handler-Funktion zum Einfärben einer Zelle
+            button_callback (function): Die Callback-Funktion, die aufgerufen wird, wenn der Button geklickt wird
         """
         self.screen = screen
         self.color_cell_handler = color_cell_handler
@@ -170,7 +172,9 @@ class BoardView:
     def start_drag(self, start_pos):
         """
         Startet den Drag-Vorgang.
-        :param start_pos: Die Startposition des Drag-Vorgangs
+
+        Args:
+            start_pos (tuple): Die Startposition des Drag-Vorgangs
         """
         if not self.dragging:
             self.dragging = True
@@ -181,7 +185,9 @@ class BoardView:
     def drop(self, drop_pos):
         """
         Behandelt das Ablegen der gezogenen Farbzelle.
-        :param drop_pos: Die Position, an der die Farbzelle abgelegt wurde
+
+        Args:
+            drop_pos (tuple): Die Position, an der die Farbzelle abgelegt wurde
         """
         if self.button_rect.collidepoint(drop_pos):
             # Überprüfen, ob der Button geklickt wurde
@@ -205,8 +211,12 @@ class BoardView:
     def get_clicked_cell(self, mouse_pos):
         """
         Ermittelt die Zelle, die anhand der Mausposition angeklickt wurde.
-        :param mouse_pos: Die aktuelle Mausposition
-        :return: Die Zeilen- und Spaltennummer der angeklickten Zelle
+
+        Args:
+            mouse_pos (tuple): Die aktuelle Mausposition
+
+        Returns:
+            tuple: Die Zeilen- und Spaltennummer der angeklickten Zelle sowie ein Wert, ob es sich um das linke Spielbrett handelt oder nicht
         """
         x, y = mouse_pos
         margin = config.MARGIN
@@ -240,8 +250,12 @@ class BoardView:
     def get_clicked_color(self, mouse_pos):
         """
         Ermittelt die Farbe, die anhand der Mausposition angeklickt wurde.
-        :param mouse_pos: Die aktuelle Mausposition
-        :return: Die ausgewählte Farbe
+
+        Args:
+            mouse_pos (tuple): Die aktuelle Mausposition
+
+        Returns:
+            tuple: Die ausgewählte Farbe
         """
         for i, color in enumerate(self.used_colors):
             circle_x = i * (config.CELL_SIZE + config.GAP_SIZE) + config.CELL_SIZE // 2 + config.MARGIN
