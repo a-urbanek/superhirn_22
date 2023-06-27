@@ -14,6 +14,10 @@ computer_is_playing = False
 # Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
 computer_is_network = True
 
+# IP-Adresse und Port für den Server
+IP_ADDRESS = "127.0.0.1"
+PORT = 8002
+
 # Variable, die angibt, ob der Geheimcode bereits festgelegt wurde
 code_is_coded = False
 

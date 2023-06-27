@@ -5,12 +5,6 @@ import requests
 from config import config
 from config import game_config
 
-# IP-Adresse des Servers
-IP_ADDRESS = "127.0.0.1"
-
-# Portnummer des Servers
-PORT = 8002
-
 
 class ComputerNetworkCoder:
     def __init__(self):
@@ -75,7 +69,7 @@ class ComputerNetworkCoder:
             requests.exceptions.RequestException: Bei einem Fehler während der Anfrage.
         """
         global response
-        url = "http://{}:{}".format(IP_ADDRESS, PORT)
+        url = "http://{}:{}".format(game_config.IP_ADDRESS, game_config.PORT)
 
         data = {
             "gameid": gameid,
