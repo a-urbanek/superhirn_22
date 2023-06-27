@@ -44,7 +44,7 @@ class PlayerCoder:
 
         # Der Geheimcode wurde erraten
         if black_pins is config.COLUMNS:
-            game_config.player_won = True
+            game_config = True
             game_config.game_is_over = True
             return
 

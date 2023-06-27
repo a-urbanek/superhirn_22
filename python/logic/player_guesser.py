@@ -1,5 +1,6 @@
 import config
 from config import game_config
+from config import config
 
 
 class PlayerGuesser:
