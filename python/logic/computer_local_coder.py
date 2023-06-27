@@ -1,5 +1,5 @@
-from collections import Counter
 import numpy as np
+
 from config import config
 from config import game_config
 from logic.general_logic import calculate_pins

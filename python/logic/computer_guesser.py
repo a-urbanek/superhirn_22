@@ -1,7 +1,7 @@
 import random
+
 from config import config
 from logic.general_logic import calculate_pins
-import matplotlib.pyplot as plt
 
 
 class ComputerGuesser:
@@ -65,7 +65,8 @@ class ComputerGuesser:
         """
         Aktualisiert die Liste der möglichen Codes basierend auf dem erhaltenen Feedback
         """
-        self.possibilities = [code for code in self.possibilities if self.evaluate_guess(code) == (black_pins, white_pins)]
+        self.possibilities = [code for code in self.possibilities if
+                              self.evaluate_guess(code) == (black_pins, white_pins)]
 
     def get_all_possible_codes(self):
         """
@@ -128,4 +129,3 @@ class ComputerGuesser:
 # print("Schnellster Versuch:", fastest_attempt, "Versuche")
 # print("Langsamster Versuch:", slowest_attempt, "Versuche")
 # print("Durchschnittliche Anzahl der Versuche:", average_attempt, "Versuche")
-

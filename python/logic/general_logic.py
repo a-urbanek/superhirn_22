@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def calculate_pins(solution, guess):
     """
     Berechnet die Anzahl der schwarzen und weißen Pins für einen gegebenen Rateversuch im Vergleich zur Lösung.

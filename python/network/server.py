@@ -2,7 +2,6 @@ import json
 import random
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-import config.config
 from logic.general_logic import calculate_pins
 
 IP_ADDRESS = "127.0.0.1"
@@ -10,11 +9,13 @@ PORT = 8002
 
 all_codes = {}
 
+
 def generate_secret_code(positions, colors):
     random_string = ""
     for _ in range(positions):
         random_string += str(random.randint(1, colors))
     return random_string
+
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_response(self, status_code=200):
@@ -70,7 +71,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         self._set_response()
         self.wfile.write(json.dumps(response).encode("utf-8"))
-
 
 
 def run_server():

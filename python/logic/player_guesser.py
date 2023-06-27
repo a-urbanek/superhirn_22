@@ -1,11 +1,8 @@
+import config
 from config import game_config
 
 
 class PlayerGuesser:
-    def __init__(self):
-        # Initialisierung des PlayerGuesser-Objekts
-        # Hier können ggf. weitere Initialisierungen vorgenommen werden
-        pass
 
     def make_move(self):
         """
@@ -24,3 +21,13 @@ class PlayerGuesser:
             game_config.computer_is_playing = True
 
         return
+
+    def guess(self):
+        row_is_correct = True
+        for column in range(config.COLUMNS):
+            if game_config.board_guess[game_config.current_row][column] is None:
+                row_is_correct = False
+
+        if row_is_correct:
+            game_config.board_final[game_config.current_row] = game_config.board_guess[game_config.current_row]
+            game_config.computer_is_playing = True

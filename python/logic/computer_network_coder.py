@@ -1,13 +1,16 @@
-import requests
 import json
-from config import game_config
+
+import requests
+
 from config import config
+from config import game_config
 
 # IP-Adresse des Servers
 IP_ADDRESS = "127.0.0.1"
 
 # Portnummer des Servers
 PORT = 8002
+
 
 class ComputerNetworkCoder:
     def __init__(self):
