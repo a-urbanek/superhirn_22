@@ -1,5 +1,8 @@
 import random
 from config import config
+from logic.general_logic import calculate_pins
+import matplotlib.pyplot as plt
+
 
 class ComputerGuesser:
     def __init__(self, code_length):
@@ -20,25 +23,27 @@ class ComputerGuesser:
         """
         Bewertet den geratenen Code und gibt die Anzahl der schwarzen und weißen Pins zurück
         """
-        black_pins = 0
-        white_pins = 0
+        # black_pins = 0
+        # white_pins = 0
         code_copy = list(code)
         guess_copy = list(self.last_guess)
 
-        # Überprüfe auf schwarze Pins (richtige Farbe an richtiger Position)
-        for i in range(len(guess_copy)):
-            if guess_copy[i] == code_copy[i]:
-                black_pins += 1
-                code_copy[i] = None
-                guess_copy[i] = None
+        black_pins, white_pins = calculate_pins(code_copy, guess_copy)
 
-        # Überprüfe auf weiße Pins (richtige Farbe an falscher Position)
-        for i in range(len(guess_copy)):
-            if guess_copy[i] is not None and guess_copy[i] in code_copy:
-                white_pins += 1
-                index = code_copy.index(guess_copy[i])
-                code_copy[index] = None
-                guess_copy[i] = None
+        # # Überprüfe auf schwarze Pins (richtige Farbe an richtiger Position)
+        # for i in range(len(guess_copy)):
+        #     if guess_copy[i] == code_copy[i]:
+        #         black_pins += 1
+        #         code_copy[i] = None
+        #         guess_copy[i] = None
+        #
+        # # Überprüfe auf weiße Pins (richtige Farbe an falscher Position)
+        # for i in range(len(guess_copy)):
+        #     if guess_copy[i] is not None and guess_copy[i] in code_copy:
+        #         white_pins += 1
+        #         index = code_copy.index(guess_copy[i])
+        #         code_copy[index] = None
+        #         guess_copy[i] = None
 
         return black_pins, white_pins
 
@@ -46,6 +51,11 @@ class ComputerGuesser:
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """
+
+        # TODO:
+        # if len(self.possibilities) == 0:
+        #     print("Was soll hier passieren?")
+
         guess = random.choice(self.possibilities)
         self.solutions.append(guess)
         self.last_guess = guess
@@ -73,3 +83,49 @@ class ComputerGuesser:
         generate_codes(config.COLORS_NUMBERS, self.code_length, [])
 
         return possibilities
+
+# game = ComputerGuesser(code_length=config.COLUMNS)
+# attempts_list = []
+#
+# for i in range(10000):
+#     if i % 100 == 0:
+#         print(i)
+#     guess = None
+#     attempts = 0
+#
+#     solution = game.generate_code()
+#     game.possibilities = game.get_all_possible_codes()
+#
+#     while guess != solution:
+#         attempts += 1
+#         guess = game.guess_code()
+#         black_pins, white_pins = game.evaluate_guess(solution)
+#         game.evaluate_feedback(black_pins, white_pins)
+#
+#     attempts_list.append(attempts)
+#
+# # Berechnung der schnellsten, langsamsten und durchschnittlichen Anzahl der Versuche
+# fastest_attempt = min(attempts_list)
+# slowest_attempt = max(attempts_list)
+# average_attempt = sum(attempts_list) / len(attempts_list)
+#
+# # Plotten des Histogramms
+# plt.figure(figsize=(10, 10))
+# plt.hist(attempts_list, bins=range(min(attempts_list), max(attempts_list) + 2), edgecolor='black')
+# plt.xlabel('Anzahl der Versuche')
+# plt.ylabel('Häufigkeit')
+# plt.title('Verteilung der Versuche')
+# plt.grid(True)
+#
+# # Markierung des Mittelwerts
+# mean_value = average_attempt
+# plt.axvline(mean_value, color='red', linestyle='dashed', linewidth=2)
+# plt.text(mean_value + 0.1, plt.ylim()[1] * 0.97, f'Mittelwert: {mean_value:.2f}', color='black',font = {'size': 15})
+#
+# plt.tight_layout()
+# plt.show()
+#
+# print("Schnellster Versuch:", fastest_attempt, "Versuche")
+# print("Langsamster Versuch:", slowest_attempt, "Versuche")
+# print("Durchschnittliche Anzahl der Versuche:", average_attempt, "Versuche")
+

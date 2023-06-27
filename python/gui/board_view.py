@@ -6,7 +6,7 @@ import config.game_config as game_config
 
 
 class BoardView:
-    def __init__(self, screen, color_cell_handler, button_callback):
+    def __init__(self, screen, color_cell_handler, button_callback, button_exit_callback):
         """
         Initialisiert die BoardView-Klasse.
 
@@ -18,6 +18,7 @@ class BoardView:
         self.screen = screen
         self.color_cell_handler = color_cell_handler
         self.button_callback = button_callback
+        self.button_exit_callback = button_exit_callback
         self.dragging = False
         self.dragged_color = None
         self.start_pos = (0, 0)
@@ -31,15 +32,32 @@ class BoardView:
         # GUI-Manager erstellen
         self.gui_manager = pygame_gui.UIManager(screen.get_size())
 
-        # Button-Parameter
-        self.button_rect = pygame.Rect(len(self.used_colors) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
-                                       config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, 100, 50)
 
         self.textfield_rect = pygame.Rect(config.MARGIN, (config.ROWS + 2) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.WIDTH - 2 * config.MARGIN, config.TEXTFIELD_HEIGHT)
+
+        # Button-Parameter
+        self.button_rect = pygame.Rect(len(self.used_colors) * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
+                                       config.ROWS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN, config.BUTTON_WIDTH, config.BUTTON_HEIGHT)
+
+        self.button_rect = pygame.Rect(config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE) +
+                                       config.COLUMNS * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE) +
+                                       3 * config.MARGIN,
+                                       config.MARGIN,
+                                       config.BUTTON_WIDTH, config.BUTTON_HEIGHT)
 
         self.button_color = (255, 0, 0)
         self.button_text = "Bestätigen"
         self.button_font = pygame.font.Font(None, 24)
+
+        # Button-Parameter
+        self.button_exit_rect = pygame.Rect(config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE) +
+                                       config.COLUMNS * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE) +
+                                       3 * config.MARGIN,
+                                       2 * config.MARGIN + config.BUTTON_HEIGHT,
+                                       config.BUTTON_WIDTH, config.BUTTON_HEIGHT)
+        self.button_exit_color = (20, 20, 20)
+        self.button_exit_text = "Beenden"
+        self.button_exit_font = pygame.font.Font(None, 24)
 
         self.textfield_text = ""
 
@@ -55,25 +73,25 @@ class BoardView:
 
         self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
 
-        # Rahmen um das Spielfeld zeichnen
-        board_rect = pygame.Rect(
-            config.MARGIN,
-            config.MARGIN,
-            config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
-            config.ROWS * (config.CELL_SIZE + config.GAP_SIZE)
-        )
-
-        pygame.draw.rect(self.screen, (255, 0, 0), board_rect, 3)
-
-        # Rahmen um die Feedback-Kugeln zeichnen
-        feedback_rect = pygame.Rect(
-            config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
-            config.MARGIN + (config.CELL_SIZE + config.GAP_SIZE),
-            config.COLUMNS * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE),
-            (config.ROWS - 1) * (config.CELL_SIZE + config.GAP_SIZE)
-        )
-
-        pygame.draw.rect(self.screen, (0, 0, 255), feedback_rect, 3)
+        # # Rahmen um das Spielfeld zeichnen
+        # board_rect = pygame.Rect(
+        #     config.MARGIN,
+        #     config.MARGIN,
+        #     config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
+        #     config.ROWS * (config.CELL_SIZE + config.GAP_SIZE)
+        # )
+        #
+        # pygame.draw.rect(self.screen, (255, 0, 0), board_rect, 3)
+        #
+        # # Rahmen um die Feedback-Kugeln zeichnen
+        # feedback_rect = pygame.Rect(
+        #     config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE) + 2 * config.MARGIN,
+        #     config.MARGIN + (config.CELL_SIZE + config.GAP_SIZE),
+        #     config.COLUMNS * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE),
+        #     (config.ROWS - 1) * (config.CELL_SIZE + config.GAP_SIZE)
+        # )
+        #
+        # pygame.draw.rect(self.screen, (0, 0, 255), feedback_rect, 3)
 
         # Zeichnen der leeren Zellen des Spielbretts
         for row in range(config.ROWS):
@@ -149,16 +167,22 @@ class BoardView:
                         radius
                     )
 
-        # Zeichnen des Buttons
+        # Zeichnen des Bestätigen Buttons
         pygame.draw.rect(self.screen, self.button_color, self.button_rect)
         button_text_surface = self.button_font.render(self.button_text, True, (255, 255, 255))
         button_text_rect = button_text_surface.get_rect(center=self.button_rect.center)
         self.screen.blit(button_text_surface, button_text_rect)
 
+        # Zeichnen des Beenden Buttons
+        pygame.draw.rect(self.screen, self.button_exit_color, self.button_exit_rect)
+        button_exit_text_surface = self.button_font.render(self.button_exit_text, True, (255, 255, 255))
+        button_exit_text_rect = button_exit_text_surface.get_rect(center=self.button_exit_rect.center)
+        self.screen.blit(button_exit_text_surface, button_exit_text_rect)
+
         # Zeichnen des Textfelds
-        textfield_color = (0, 0, 0)
-        textfield_font = pygame.font.SysFont(None, 50)
-        textfield_text_color = (0, 0, 0)
+        textfield_color = (255, 255, 255)
+        textfield_font = pygame.font.SysFont(None, 40)
+        textfield_text_color = (255, 255, 255)
         textfield_border_width = 2
         textfield_padding = 5
 
@@ -192,6 +216,8 @@ class BoardView:
         if self.button_rect.collidepoint(drop_pos):
             # Überprüfen, ob der Button geklickt wurde
             self.button_callback(self)
+        elif self.button_exit_rect.collidepoint(drop_pos):
+            self.button_exit_callback(self)
         else:
             # Einfärben der Zelle, wenn sie im Spielbrettbereich liegt
             drop_row, drop_column, isLeftBoard = self.get_clicked_cell(drop_pos)

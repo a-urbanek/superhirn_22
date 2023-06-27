@@ -1,6 +1,8 @@
 import pygame
 from .menu_model import MenuModel 
 from config import config
+from config import game_config
+import numpy as np
 
 class MenuView:
     def __init__(self, screen):
@@ -26,3 +28,13 @@ class MenuView:
             text_rect = text.get_rect(center=(config.WIDTH / 2, 200 + i * 50))
             self.screen.blit(text, text_rect)
         pygame.display.flip()
+
+    def clearSetting(self):
+        game_config.game_is_over = False
+        game_config.board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
+        game_config.solution = np.empty(config.COLUMNS, dtype=object)
+        game_config.code_is_coded = False
+        game_config.current_row = config.ROWS - 1
+        pass
