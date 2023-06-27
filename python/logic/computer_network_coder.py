@@ -81,6 +81,8 @@ class ComputerNetworkCoder:
 
         headers = {"Content-Type": "application/json"}
 
+        print("Send:", data)
+
         try:
             # Senden einer POST-Anfrage an den Server
             response = requests.post(url, data=json.dumps(data), headers=headers)
@@ -89,6 +91,7 @@ class ComputerNetworkCoder:
 
             if response.status_code == 200:
                 # Extrahieren der Antwortdaten
+                print("Received:", response_data)
                 self.gameid = response_data.get("gameid", gameid)
                 self.value = response_data["value"]
 

@@ -1,7 +1,7 @@
 # Konfigurationen für das Spiel
 
 # Variable, die angibt, ob der Spielmodi Superhirn aktiv ist
-IS_SUPERSUPERHIRN = False
+IS_SUPERSUPERHIRN = True
 
 # Anzahl der Reihen (eine zusätzliche Reihe für die Farben)
 ROWS = 11
