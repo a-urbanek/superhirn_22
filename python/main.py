@@ -118,6 +118,8 @@ class MainApp:
 
                 if black_temp != black_pins or white_temp != white_pins:
                     print("Falsche Bewertung")
+                    print(black_temp, white_temp)
+                    print(black_pins, white_pins)
                     self.board_view.textfield_text = "Falsche Bewertung!"
                     return
 

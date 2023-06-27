@@ -7,7 +7,7 @@ from config import config
 IP_ADDRESS = "127.0.0.1"
 
 # Portnummer des Servers
-PORT = 8001
+PORT = 8002
 
 class ComputerNetworkCoder:
     def __init__(self):
@@ -21,6 +21,7 @@ class ComputerNetworkCoder:
         # Senden eines Requests an den Server, um das Spiel zu initialisieren
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
         print("Game ID:", self.gameid)
+        print(self.colors)
 
         if self.gameid != 0:
             # Der Geheimcode wurde vom Server generiert

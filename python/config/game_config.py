@@ -12,7 +12,7 @@ current_row = config.ROWS - 1
 computer_is_playing = False
 
 # Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
-computer_is_network = False
+computer_is_network = True
 
 # Variable, die angibt, ob der Geheimcode bereits festgelegt wurde
 code_is_coded = False

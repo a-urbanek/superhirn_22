@@ -2,20 +2,18 @@ import json
 import random
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import config.config
 from logic.general_logic import calculate_pins
 
 IP_ADDRESS = "127.0.0.1"
-PORT = 8001
-
-array = [1, 2, 3, 4, 5, 6, 7, 8]
+PORT = 8002
 
 all_codes = {}
 
-
-def generate_secret_code(positions):
+def generate_secret_code(positions, colors):
     random_string = ""
     for _ in range(positions):
-        random_string += str(random.choice(array))
+        random_string += str(random.randint(1, colors))
     return random_string
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -50,7 +48,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         if gameid == 0 or not gameid in all_codes:
             gameid = random.randint(1, 10000)
-            all_codes[gameid] = generate_secret_code(positions)
+            all_codes[gameid] = generate_secret_code(positions, colors)
             value = ""
             print("Solution:", all_codes[gameid])
         else:
