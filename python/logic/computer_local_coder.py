@@ -2,6 +2,8 @@ from collections import Counter
 import numpy as np
 from config import config
 from config import game_config
+from logic.general_logic import calculate_pins
+
 
 class ComputerLocalCoder:
     def __init__(self):
@@ -14,11 +16,12 @@ class ComputerLocalCoder:
         """
         Bewertet den aktuellen Zug des Spielers.
         """
-        print(game_config.solution)
-        self.solution_temp = game_config.solution.copy()
+        # print(game_config.solution)
+        self.solution_temp = np.array(game_config.solution).copy()
         self.current_guess = np.array(game_config.board_final[game_config.current_row]).copy()
-        self.red_pins = self.count_red_pins()
-        self.white_pins = self.count_white_pins()
+        self.red_pins, self.white_pins = calculate_pins(self.solution_temp, self.current_guess)
+        # self.red_pins = self.count_red_pins()
+        # self.white_pins = self.count_white_pins()
 
         if self.red_pins is config.COLUMNS:
             game_config.player_won = True
@@ -31,7 +34,7 @@ class ComputerLocalCoder:
         # game_config.current_row -= 1
 
         # print(game_config.solution)
-        return self.red_pins, self.white_pins
+        return self.white_pins, self.red_pins
 
     def count_red_pins(self):
         """

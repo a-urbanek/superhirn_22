@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pygame
 from config import config
@@ -10,6 +12,7 @@ from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder
 from logic.computer_network_coder import ComputerNetworkCoder
+from logic.general_logic import calculate_pins
 from logic.player_coder import PlayerCoder
 from logic.player_guesser import PlayerGuesser
 
@@ -26,6 +29,8 @@ class MainApp:
 
         # Erstellen eines Clock-Objekts zur Framerate-Steuerung
         self.clock = pygame.time.Clock()
+
+        self.time = time.time() - 1000
 
         # Property und Setter für den Zustand der Anwendung (Menü oder Spiel)
         @property
@@ -46,7 +51,7 @@ class MainApp:
         self.menu_controller = MenuController(self.screen, self)
 
         # Initialisierung der Boardansicht
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
 
         # Initialisierung von Coder und Guesser
         self.coder = None
@@ -60,6 +65,15 @@ class MainApp:
         else:
             self.coder = PlayerCoder()
             self.guesser = ComputerGuesser(code_length=config.COLUMNS)
+
+    def handle_button_exit_click(self, board_view):
+        self._state = MENU
+        self.menu_view = MenuView(self.screen)
+        self.menu_controller = MenuController(self.screen, self)
+        self.menu_view.clearSetting()
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.coder = None
+        self.guesser = None
 
     def handle_button_click(self, board_view):
         """
@@ -95,8 +109,17 @@ class MainApp:
 
             elif not game_config.player_is_guesser:
                 # Der Spieler bewertet einen Rateversuch des Computers
+                print("Solution:", game_config.solution)
+                print("Guess:", game_config.board_final[game_config.current_row])
+                black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])
+
                 white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
                 black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
+
+                if black_temp != black_pins or white_temp != white_pins:
+                    print("Falsche Bewertung")
+                    self.board_view.textfield_text = "Falsche Bewertung!"
+                    return
 
                 # Der Geheimcode wurde erraten
                 if black_pins is config.COLUMNS:
@@ -139,7 +162,7 @@ class MainApp:
 
             elif row == (game_config.current_row - 1) and not game_config.player_is_guesser and not isLeftBoard:
                 # Der Spieler bewertet einen Rateversuch des Computers
-                game_config.feedback_board_final[row, column] = convert_input_to_color(color)
+                game_config.feedback_board_final[row, column] = convert_input_to_color(color, True)
                 board_view.board_feedback[row + 1][column] = color
 
     def run(self):
@@ -216,15 +239,29 @@ class MainApp:
                                 game_config.board_final[game_config.current_row][index] = item
                                 game_config.computer_is_playing = False
 
-                # Ereignisschleife zum Abfragen von Ereignissen
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         return
                     elif event.type == pygame.MOUSEBUTTONDOWN:
-                        # Wenn eine Maustaste gedrückt wird, starte das Drag-Event mit der aktuellen Mausposition
                         mouse_pos = pygame.mouse.get_pos()
-                        self.board_view.start_drag(mouse_pos)
+                        # Linksklick
+                        if event.button == 1:
+                            # Wenn eine Maustaste gedrückt wird, starte das Drag-Event mit der aktuellen Mausposition
+                            self.board_view.start_drag(mouse_pos)
+                        elif event.button == 3:
+                            # Wenn der Spieler bewertet, kann er Eingaben durch Rechtsklick wieder entfernen
+                            if not game_config.player_is_guesser and not game_config.game_is_over and not game_config.computer_is_playing:
+                                row, column, is_left = self.board_view.get_clicked_cell(mouse_pos)
+                                if not is_left:
+                                    game_config.feedback_board_final[row][column] = None
+                                    self.board_view.board_feedback[row + 1] = game_config.feedback_board_final[row]
+                            # elif game_config.player_is_guesser and not game_config.game_is_over and not game_config.computer_is_playing:
+                            #     row, column, is_left = self.board_view.get_clicked_cell(mouse_pos)
+                            #     if is_left:
+                            #         game_config.board_guess[row][column] = None
+                            #         self.board_view.board[row] = game_config.board_guess[row]
+
                     elif event.type == pygame.MOUSEBUTTONUP:
                         # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus
                         mouse_pos = pygame.mouse.get_pos()
@@ -237,11 +274,11 @@ class MainApp:
                 self.board_view.update()
                 self.board_view.draw()
 
-                # Bildschirm aktualisieren
-                pygame.display.flip()
+            # Bildschirm aktualisieren
+            pygame.display.flip()
 
-                # Begrenzung der Framerate
-                self.clock.tick(config.FPS)
+            # Begrenzung der Framerate
+            self.clock.tick(config.FPS)
 
 if __name__ == '__main__':
     # Erstellen einer Instanz der MainApp-Klasse und Starten der Anwendung

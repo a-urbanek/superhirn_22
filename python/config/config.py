@@ -1,7 +1,10 @@
 # Konfigurationen für das Spiel
 
+# Variable, die angibt, ob der Spielmodi Superhirn aktiv ist
+IS_SUPERHIRN = True
+
 # Anzahl der Reihen (eine zusätzliche Reihe für die Farben)
-ROWS = 10
+ROWS = 11
 # ROWS = 3  # Beispiel: Anzahl der Reihen auf 3 reduziert
 
 # Anzahl der Spalten
@@ -35,10 +38,10 @@ FEEDBACK_CELL_SIZE = 30
 FEEDBACK_GAP_SIZE = GAP_SIZE
 
 # Farben für die Zellen im Spielbrett
-COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255), (0, 0, 0)]
+COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255), (0, 0, 0)] if IS_SUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0)]
 
 # Farbennummern für die Zellen im Spielbrett
-COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8]
+COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if IS_SUPERHIRN else [1, 2, 3, 4, 5, 6]
 
 # Farben für die Zellen im Feedback-Board
 FEEDBACK_COLORS = [(255, 255, 255), (0, 0, 0)]
@@ -55,15 +58,21 @@ MARGIN = 30
 # Höhe des Textfelds
 TEXTFIELD_HEIGHT = 100
 
+# Breite des Buttons
+BUTTON_WIDTH = 100
+
+# Höhe des Buttons
+BUTTON_HEIGHT = 30
+
 # Berechnung der Breite des Fensters basierend auf der Anzahl der Spalten und der Zellengröße
 WIDTH = (
     COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE)
     + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
-    + 3 * MARGIN
+    + 4 * MARGIN + BUTTON_WIDTH
 ) if (
     COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE)
     + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
-    + 3 * MARGIN
+    + 4 * MARGIN + BUTTON_WIDTH
 ) > (
     3 * MARGIN + len(COLORS) * (CELL_SIZE + GAP_SIZE) + 100
 ) else (
@@ -81,8 +90,3 @@ HEIGHT = (
     + TEXTFIELD_HEIGHT
 ) > 500 else 500
 
-# Breite des Buttons
-button_width = 100
-
-# Höhe des Buttons
-button_height = 30
