@@ -2,10 +2,13 @@ import pygame
 
 from config import config
 from config import game_config
-from constants import MENU, GAME
+from constants import MENU, GAME, ONLINE_SETTINGS
 from gui.board_view import BoardView
 from gui.menu_controller import MenuController
 from gui.menu_view import MenuView
+from gui.menu_model import MenuModel
+from gui.mvc_online_settings.view import View as OnlineSettingsView
+from gui.mvc_online_settings.controller import Controller as OnlineSettingsController
 from logic.computer_local_coder import ComputerLocalCoder
 from logic.player_guesser import PlayerGuesser
 
@@ -13,7 +16,7 @@ from logic.player_guesser import PlayerGuesser
 class MainApp:
     def __init__(self):
         # Initialisierung von Pygame
-        pygame.init()
+        pygame.init()   # pylint: disable=E1101
 
         # Erstellen des Bildschirms mit den angegebenen Dimensionen
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
@@ -30,7 +33,7 @@ class MainApp:
 
         @state.setter
         def state(self, value):
-            if value in [MENU, GAME]:
+            if value in [MENU, GAME, ONLINE_SETTINGS]:
                 print("setting..." + value)
                 self._state = value
             else:
@@ -38,19 +41,36 @@ class MainApp:
 
         self._state = MENU
 
-        # It creates an instance of the `MenuView` class, passing in the `screen` object as a parameter. This
-        # is used to display the menu screen in the game.
-        self.menu_view = MenuView(self.screen)
-        self.menu_controller = MenuController(self.screen, self)
+        self.online_settings_view = OnlineSettingsView(self.screen)
+        self.online_settings_controller = OnlineSettingsController(
+            self.screen, self)
+
+        # These lines of code are creating instances of the `MenuModel`, `MenuView`, and `MenuController`
+        # classes, which are part of the Model-View-Controller (MVC) design pattern.
+        # By creating these objects, the code is setting up the MVC architecture for the menu screen.
+        self.menu_model = MenuModel(self)
+        self.menu_view = MenuView(self.screen, self.menu_model)
+        self.menu_controller = MenuController(self.menu_model, self.menu_view)
 
         # Erstellen eines BoardView-Objekts mit dem Bildschirm und der Farbzellen-Methode
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click)
+        self.board_view = BoardView(
+            self.screen, self.color_cell, self.handle_button_click)
 
         # Erstellen eines ComputerCoder-Objekts
         self.computer = ComputerLocalCoder()
 
         # Erstellen des Players
         self.player = PlayerGuesser()
+
+    def set_state(self, value):
+        """
+        This function sets the value of the "_state" attribute to the input "value".
+
+        :param value: The value parameter is the new value that we want to set for the state attribute of an
+        object. The method set_state() takes this value as an argument and assigns it to the private
+        attribute _state of the object
+        """
+        self._state = value
 
     def handle_button_click(self, board_view):
         """
@@ -90,20 +110,25 @@ class MainApp:
                     self.menu_controller.handle_event(event)
                     self.menu_view.draw()
 
+            elif self._state == ONLINE_SETTINGS:
+                for event in pygame.event.get():
+                    self.online_settings_controller.handle_event(event)
+                    self.online_settings_view.draw()
+
             elif self._state == GAME:
                 if game_config.computer_is_playing:
                     self.computer.rate_moe()
 
                 # Ereignisschleife zum Abfragen von Ereignissen
                 for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
+                    if event.type == pygame.QUIT:# pylint: disable=E1101
+                        pygame.quit()# pylint: disable=E1101
                         return
-                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                    elif event.type == pygame.MOUSEBUTTONDOWN:# pylint: disable=E1101
                         # Wenn eine Maustaste gedrückt wird, starte das Drag-Event mit der aktuellen Mausposition
                         mouse_pos = pygame.mouse.get_pos()
                         self.board_view.start_drag(mouse_pos)
-                    elif event.type == pygame.MOUSEBUTTONUP:
+                    elif event.type == pygame.MOUSEBUTTONUP:# pylint: disable=E1101
                         # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus
                         mouse_pos = pygame.mouse.get_pos()
                         self.board_view.drop(mouse_pos)

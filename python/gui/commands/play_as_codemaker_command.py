@@ -1,5 +1,4 @@
 from .command import Command
-
 import sys
 sys.path.insert(0, '..')
 from constants import GAME
@@ -7,7 +6,7 @@ from constants import GAME
 
 # The PlayAsCodeMakerCommand class defines a command to play as a CodeMaker.
 class PlayAsCodeMakerCommand(Command):
-    def execute(self, main_app):
+    def execute(self):
         """
         This function sets the state of the main app to "GAME"
         
@@ -16,7 +15,7 @@ class PlayAsCodeMakerCommand(Command):
         main application
         """
         print("Playing as CodeMaker")
-        main_app._state = GAME
+        self.main_app.set_state(GAME)
 
     def __str__(self):
         return "Play as CodeMaker"

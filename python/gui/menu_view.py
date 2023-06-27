@@ -1,18 +1,18 @@
 import pygame
-from .menu_model import MenuModel 
 from config import config
 
+
 class MenuView:
-    def __init__(self, screen):
+    def __init__(self, screen, model):
         """
         This is the constructor function that initializes its attributes including a MenuModel
         object, a screen object, and a font object.
-        
+
         :param screen: The "screen" parameter is a reference to the Pygame display surface where the
         menu will be rendered. It is used to create a MenuView object that will handle the visual
         representation of the menu
         """
-        self.model = MenuModel()
+        self.model = model
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
 
