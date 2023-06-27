@@ -28,6 +28,13 @@ class PlayerCoder:
         white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
         black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
 
+        print("Soll rauskommen")
+        print("Black Pins:", black_temp)
+        print("White Pins:", white_temp)
+        print("Kommt raus")
+        print("Black Pins:", black_pins)
+        print("White Pins:", white_pins)
+
         if black_temp != black_pins or white_temp != white_pins:
             print("Falsche Bewertung")
             print(black_temp, white_temp)

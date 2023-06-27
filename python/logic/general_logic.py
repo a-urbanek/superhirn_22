@@ -23,6 +23,11 @@ def calculate_pins(solution, guess):
     solution_copy = np.asarray(solution).tolist()
     guess_copy = np.asarray(guess).tolist()
 
+    # if (solution_copy == guess_copy):
+    #     black_pins = 5
+    #     white_pins = 0
+    #     return black_pins, white_pins
+
     # Berechnung der schwarzen Pins
     for i in range(len(guess)):
         # print(i)

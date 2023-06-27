@@ -227,6 +227,12 @@ class MainApp:
                         mouse_pos = pygame.mouse.get_pos()
                         self.board_view.drop(mouse_pos)
 
+                if game_config.game_is_over:
+                    if game_config.player_won:
+                        self.board_view.textfield_text = "Das Spiel ist vorbei. Du hast gewonnen!"
+                    else:
+                        self.board_view.textfield_text = "Das Spiel ist vorbei. Du hast verloren!"
+
                 # Bildschirm mit einer Hintergrundfarbe füllen
                 self.screen.fill((80, 80, 80))
 
