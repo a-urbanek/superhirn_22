@@ -2,19 +2,35 @@ import numpy as np
 
 from config import config
 
-player_is_guesser = True
-current_row = 9 # unterste Reihe bei 10 Reihen
+# Variable, die angibt, ob der Spieler der Rater ist
+player_is_guesser = None
+
+# Aktuelle Reihe, auf der der Rater seinen Rateversuch macht (unterste Reihe bei 10 Reihen)
+current_row = config.ROWS - 1
+
+# Variable, die angibt, ob der Computer am Zug ist
 computer_is_playing = False
 
-solution = np.empty(config.COLUMNS, dtype=object)
-solution[0] = (255, 0, 0)
-solution[1] = (0, 255, 0)
-solution[2] = (0, 0, 255)
-solution[3] = (255, 255, 0)
-solution[4] = (255, 0, 255)
+# Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
+computer_is_network = False
 
-# Erstellen des Rate-Boards
+# Variable, die angibt, ob der Geheimcode bereits festgelegt wurde
+code_is_coded = False
+
+# Array, das den Geheimcode enthält
+solution = np.empty(config.COLUMNS, dtype=object)
+
+# Variable, die angibt, ob das Spiel vorbei ist
+game_is_over = False
+
+# Variable, die angibt, ob der Spieler gewonnen hat
+player_won = False
+
+# Erstellen des Rate-Boards, auf dem der Spieler seinen Rateversuch macht
 board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
 
-# Erstellen des Boards mit allen logisch sinnvollen Eingaben
+# Erstellen des Boards, das alle logisch sinnvollen Eingaben enthält
 board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+
+# Erstellen des Boards, das die Bewertungen des Raters enthält
+feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
