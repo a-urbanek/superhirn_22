@@ -5,11 +5,9 @@ from config import game_config, config
 
 pygame.init()
 
-# Fenster erstellen
 size = (config.WIDTH, config.HEIGHT)
 screen = pygame.display.set_mode(size)
 
-# Schriftart erstellen
 FONT = pygame.freetype.Font(None, 24)
 
 def draw_text_input_box(text, rect, active, label):
@@ -52,6 +50,7 @@ def main():
                 else:
                     active2 = False
                 if network_button.collidepoint(event.pos):
+                    # Toggle für den Netzwerkstatus
                     game_config.computer_is_network = not game_config.computer_is_network
                     print(f'Computer_is_network is now: {game_config.computer_is_network}')
             if event.type == pygame.KEYDOWN:
@@ -66,6 +65,7 @@ def main():
                     else:
                         text2 += event.unicode
             if event.type == pygame.MOUSEBUTTONUP:
+                # Übernehmen der Eingaben in die entsprechenden Variablen
                 if active1:
                     game_config.IP_ADDRESS = text1
                     print(f'IP_ADDRESS is now: {game_config.IP_ADDRESS}')
