@@ -80,7 +80,7 @@ class MainApp:
     def update_roles(self):
 
         if game_config.coder_is_computer_local: self.coder = ComputerLocalCoder()
-        elif game_config.coder_is_computer_server: self.coder = ComputerNetworkCoder()
+        elif game_config.coder_is_computer_server: self.coder = ComputerNetworkCoder(self)
         else: self.coder = PlayerCoder()
 
         if game_config.guesser_is_computer: self.guesser = ComputerGuesser(code_length=config.COLUMNS)
@@ -384,10 +384,15 @@ class MainApp:
                             self.guesser.evaluate_feedback(black_pins, white_pins)
                             # print(8)
 
-                            if black_pins == 5:
+                            if black_pins == config.COLUMNS:
                                 game_config.game_is_over = True
+                                game_config.guesser_won = True
                             else:
                                 game_config.current_row -= 1
+
+                            if game_config.current_row == 0 and black_pins != config.COLUMNS:
+                                game_config.game_is_over = True
+                                game_config.guesser_won = False
 
                             game_config.coder_is_playing = False
 
@@ -412,11 +417,6 @@ class MainApp:
                                 if not is_left:
                                     game_config.feedback_board_final[row][column] = None
                                     self.board_view.board_feedback[row + 1] = game_config.feedback_board_final[row]
-                            # elif game_config.player_is_guesser and not game_config.game_is_over and not game_config.computer_is_playing:
-                            #     row, column, is_left = self.board_view.get_clicked_cell(mouse_pos)
-                            #     if is_left:
-                            #         game_config.board_guess[row][column] = None
-                            #         self.board_view.board[row] = game_config.board_guess[row]
 
                     elif event.type == pygame.MOUSEBUTTONUP:
                         # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus

@@ -4,16 +4,18 @@ import requests
 
 from config import config
 from config import game_config
+from constants import MENU_NEW
 
 
 class ComputerNetworkCoder:
-    def __init__(self):
+    def __init__(self, game):
         # Initialisierung der Variablen
         self.gameid = 0
         self.gamerid = "Gruppe 22"
         self.positions = config.COLUMNS
         self.colors = len(config.COLORS)
         self.value = ""
+        self.game = game
 
         # Senden eines Requests an den Server, um das Spiel zu initialisieren
         print("Game ID:", self.gameid)
@@ -115,6 +117,7 @@ class ComputerNetworkCoder:
 
         except requests.exceptions.RequestException as e:
             print("Fehler beim Senden der Anfrage:", str(e))
+            self.game._state = MENU_NEW
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()
                 error_message = response_data.get("error")
