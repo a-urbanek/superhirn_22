@@ -17,9 +17,10 @@ computer_is_network = True
 guesser_is_player = False
 guesser_is_computer = True
 coder_is_player = False
-coder_is_computer_local = False
-coder_is_computer_server = True
+coder_is_computer_local = True
+coder_is_computer_server = False
 coder_is_playing = True
+rate_was_correct = True
 
 # IP-Adresse und Port für den Server
 IP_ADDRESS = "127.0.0.1"
@@ -37,7 +38,9 @@ solution = np.empty(config.COLUMNS, dtype=object)
 game_is_over = False
 
 # Variable, die angibt, ob der Spieler gewonnen hat
-player_won = False
+player_won = False # muss raus
+
+guesser_won = False
 
 # Erstellen des Rate-Boards, auf dem der Spieler seinen Rateversuch macht
 board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)

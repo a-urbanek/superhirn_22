@@ -28,32 +28,25 @@ class PlayerCoder:
     def rate_move(self, board_view, guesser):
         global game_config
         rate_was_correct = True
-        print("Solution:", game_config.solution)
-        print("Guess:", game_config.board_final[game_config.current_row])
         black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])
 
         white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
         black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
 
-        print("Soll rauskommen")
-        print("Black Pins:", black_temp)
-        print("White Pins:", white_temp)
-        print("Kommt raus")
-        print("Black Pins:", black_pins)
-        print("White Pins:", white_pins)
-
         if black_temp != black_pins or white_temp != white_pins:
-            print("Falsche Bewertung")
-            print(black_temp, white_temp)
-            print(black_pins, white_pins)
-            board_view.textfield_text = "Falsche Bewertung!"
             rate_was_correct = False
-            return 0, 0, rate_was_correct
+            black_pins = 0
+            white_pins = 0
+            return black_pins, white_pins, rate_was_correct
 
         # Der Geheimcode wurde erraten
-        if black_pins is config.COLUMNS:
+        if black_pins == config.COLUMNS:
             game_config.game_is_over = True
-            return 5, 0, True
+            game_config.guesser_won = True
+            black_pins = 5
+            white_pins = 0
+            rate_was_correct = True
+            return black_pins, white_pins, rate_was_correct
 
         guesser.evaluate_feedback(black_pins, white_pins)
         game_config.current_row -= 1

@@ -19,12 +19,14 @@ class ComputerLocalCoder:
         black_pins, white_pins = calculate_pins(game_config.solution.copy(), game_config.board_final[game_config.current_row].copy())
 
         for index in range(black_pins):
-            print(index)
-            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[0]
+            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
 
         for index in range(white_pins):
-            print(index)
-            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[1]
+            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
+
+        if black_pins == config.COLUMNS:
+            game_config.game_is_over = True
+            game_config.guesser_won = True
 
         return black_pins, white_pins
 

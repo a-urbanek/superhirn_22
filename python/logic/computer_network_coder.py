@@ -55,15 +55,15 @@ class ComputerNetworkCoder:
 
         for index in range(black_pins):
             print(index)
-            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[0]
+            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
 
         for index in range(white_pins):
             print(index)
-            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[1]
+            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
 
         if white_pins is config.COLUMNS:
             # Der Spieler hat gewonnen
-            game_config.player_won = True
+            game_config.guesser_won = True
             game_config.game_is_over = True
             game_config.solution = game_config.board_final[game_config.current_row]
 
