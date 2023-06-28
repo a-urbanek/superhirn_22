@@ -23,7 +23,8 @@ class BoardView:
         self.dragged_color = None
         self.start_pos = (0, 0)
         self.current_pos = (0, 0)
-        self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
+        # self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
+        self.used_colors = config.FEEDBACK_COLORS if game_config.coder_is_playing and game_config.code_is_coded else config.COLORS
 
         # Initialisierung des Spielbretts
         self.board = [[None] * config.COLUMNS for _ in range(config.ROWS)]
@@ -71,7 +72,7 @@ class BoardView:
         # UI-Elemente zeichnen
         self.gui_manager.draw_ui(self.screen)
 
-        self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
+        self.used_colors = config.FEEDBACK_COLORS if game_config.coder_is_playing and game_config.code_is_coded else config.COLORS
 
         # # Rahmen um das Spielfeld zeichnen
         # board_rect = pygame.Rect(
@@ -125,18 +126,18 @@ class BoardView:
 
         # Zeichnen der bereits eingefärbten Zellen
         for row in range(config.ROWS):
-            if (row != 0):
-                for column in range(config.COLUMNS):
-                    if self.board_feedback[row][column] is not None:
-                        cell_x = x_start_feedback + column * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE)
-                        cell_y = y_start_feedback + row * (config.CELL_SIZE + config.GAP_SIZE)
-                        radius = config.FEEDBACK_CELL_SIZE // 2
-                        pygame.draw.circle(
-                            self.screen,
-                            (255,225,225) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][column],
-                            (cell_x, cell_y),
-                            radius
-                        )
+            for column in range(config.COLUMNS):
+                if self.board_feedback[row][column] is not None:
+                    cell_x = x_start_feedback + column * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE)
+                    cell_y = y_start_feedback + row * (config.CELL_SIZE + config.GAP_SIZE)
+                    radius = config.FEEDBACK_CELL_SIZE // 2
+                    pygame.draw.circle(
+                        self.screen,
+                        (255, 225, 225) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][
+                            column],
+                        (cell_x, cell_y),
+                        radius
+                    )
 
         # Zeichnen der Farbzellen
         for i, color in enumerate(self.used_colors):
@@ -162,7 +163,7 @@ class BoardView:
                     radius = config.CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
-                        (0,0,0) if row == 0 and not game_config.game_is_over and game_config.player_is_guesser else self.board[row][column],
+                        (0,0,0) if row == 0 and not game_config.coder_is_playing else self.board[row][column],
                         (cell_x, cell_y),
                         radius
                     )

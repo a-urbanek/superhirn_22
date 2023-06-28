@@ -8,7 +8,8 @@ from logic.general_logic import calculate_pins
 
 class PlayerCoder:
 
-    def generate_code(self):
+    def generate_code(self, board_view):
+        board_view.textfield_text = "Lege den Code in \nder ersten Reihe fest."
         row_is_correct = True
         for column in range(config.COLUMNS):
             if game_config.board_guess[0][column] is None:
@@ -20,8 +21,13 @@ class PlayerCoder:
             game_config.computer_is_playing = True
             game_config.code_is_coded = True
 
+        print(row_is_correct)
+        return row_is_correct
+
+
     def rate_move(self, board_view, guesser):
         global game_config
+        rate_was_correct = True
         print("Solution:", game_config.solution)
         print("Guess:", game_config.board_final[game_config.current_row])
         black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])
@@ -41,12 +47,13 @@ class PlayerCoder:
             print(black_temp, white_temp)
             print(black_pins, white_pins)
             board_view.textfield_text = "Falsche Bewertung!"
-            return
+            rate_was_correct = False
+            return 0, 0, rate_was_correct
 
         # Der Geheimcode wurde erraten
         if black_pins is config.COLUMNS:
             game_config.game_is_over = True
-            return
+            return 5, 0, True
 
         guesser.evaluate_feedback(black_pins, white_pins)
         game_config.current_row -= 1
@@ -55,3 +62,5 @@ class PlayerCoder:
         # Es gibt keine Rateversuche mehr
         if game_config.current_row == 0:
             game_config.game_is_over = True
+
+        return black_pins, white_pins, rate_was_correct

@@ -13,6 +13,7 @@ def calculate_pins(solution, guess):
         tuple: Ein Tupel, bestehend aus der Anzahl der schwarzen und weißen Pins.
 
     """
+    print(solution, guess)
     # Variable zur Zählung der schwarzen Pins initialisieren
     black_pins = 0
 

@@ -16,7 +16,6 @@ class ComputerNetworkCoder:
         self.value = ""
 
         # Senden eines Requests an den Server, um das Spiel zu initialisieren
-        self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
         print("Game ID:", self.gameid)
         print(self.colors)
 
@@ -24,7 +23,14 @@ class ComputerNetworkCoder:
             # Der Geheimcode wurde vom Server generiert
             game_config.code_is_coded = True
 
-    def rate_moe(self):
+    def generate_code(self, board_view):
+        self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
+        print("Aufgerufen")
+        game_config.coder_is_playing = False
+        game_config.code_is_coded = True
+        return True
+
+    def rate_move(self, board_view, guesser):
         """
         Bewertet den aktuellen Zug des Spielers.
         """
@@ -32,9 +38,13 @@ class ComputerNetworkCoder:
 
         string_guess = ""
 
+
         # Umwandeln des Rateversuchs in einen String
         for num in current_guess:
-            string_guess += str(num)
+            if num != None:
+                string_guess += str(num)
+
+        print(string_guess)
 
         # Senden eines Requests an den Server, um den Rateversuch zu bewerten
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, string_guess)
@@ -42,6 +52,14 @@ class ComputerNetworkCoder:
         # Zählen der Anzahl von weißen und schwarzen Pins in der Antwort
         white_pins = self.value.count('7')
         black_pins = self.value.count('8')
+
+        for index in range(black_pins):
+            print(index)
+            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[0]
+
+        for index in range(white_pins):
+            print(index)
+            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[1]
 
         if white_pins is config.COLUMNS:
             # Der Spieler hat gewonnen

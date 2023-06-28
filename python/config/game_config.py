@@ -17,12 +17,13 @@ computer_is_network = True
 guesser_is_player = False
 guesser_is_computer = True
 coder_is_player = False
-coder_is_computer_local = True
-coder_is_computer_server = False
+coder_is_computer_local = False
+coder_is_computer_server = True
+coder_is_playing = True
 
 # IP-Adresse und Port für den Server
 IP_ADDRESS = "127.0.0.1"
-PORT = 8002
+PORT = 8003
 # IP_ADDRESS = "141.45.39.112"
 # PORT = 5001
 

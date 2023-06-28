@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from logic.general_logic import calculate_pins
 
 IP_ADDRESS = "127.0.0.1"
-PORT = 8002
+PORT = 8003
 
 all_codes = {}
 
@@ -56,6 +56,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             print("Use exicsting gameid")
             code = all_codes[gameid]
             guess = json_data.get("value")
+            print("Guess: ", guess)
             black_pins, white_pins = calculate_pins(list(code), list(guess))
             value = '7' * white_pins + '8' * black_pins
             print("White Pins:", white_pins)
@@ -68,6 +69,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             "colors": colors,
             "value": value,
         }
+
+        print("Solution: ", all_codes[gameid])
 
         self._set_response()
         self.wfile.write(json.dumps(response).encode("utf-8"))

@@ -23,8 +23,12 @@ class PlayerGuesser:
 
         return
 
-    def guess(self):
+    def evaluate_feedback(self, black_pins, white_pins):
+        pass
+
+    def guess(self, board_view):
         row_is_correct = True
+
         for column in range(config.COLUMNS):
             if game_config.board_guess[game_config.current_row][column] is None:
                 row_is_correct = False
@@ -32,3 +36,5 @@ class PlayerGuesser:
         if row_is_correct:
             game_config.board_final[game_config.current_row] = game_config.board_guess[game_config.current_row]
             game_config.computer_is_playing = True
+
+        return row_is_correct
