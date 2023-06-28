@@ -61,7 +61,7 @@ class ComputerNetworkCoder:
             print(index)
             board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
 
-        if white_pins is config.COLUMNS:
+        if black_pins is config.COLUMNS:
             # Der Spieler hat gewonnen
             game_config.guesser_won = True
             game_config.game_is_over = True
