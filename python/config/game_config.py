@@ -15,16 +15,16 @@ computer_is_playing = False
 computer_is_network = True
 
 guesser_is_player = False
-guesser_is_computer = False
+guesser_is_computer = True
 coder_is_player = False
-coder_is_computer_local = False
+coder_is_computer_local = True
 coder_is_computer_server = False
 
 # IP-Adresse und Port für den Server
-# IP_ADDRESS = "127.0.0.1"
-# PORT = 8002
-IP_ADDRESS = "141.45.39.112"
-PORT = 5001
+IP_ADDRESS = "127.0.0.1"
+PORT = 8002
+# IP_ADDRESS = "141.45.39.112"
+# PORT = 5001
 
 # Variable, die angibt, ob der Geheimcode bereits festgelegt wurde
 code_is_coded = False

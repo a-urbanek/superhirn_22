@@ -58,13 +58,23 @@ class MainApp:
         self.guesser = None
 
     def update_roles(self):
+
+        if game_config.coder_is_computer_local: self.coder = ComputerLocalCoder()
+        elif game_config.coder_is_computer_server: self.coder = ComputerNetworkCoder()
+        else: self.coder = PlayerCoder()
+
+        if game_config.guesser_is_computer: self.guesser = ComputerGuesser(code_length=config.COLUMNS)
+        else: self.guesser = PlayerGuesser()
+
+
+
         # Aktualisierung der Rollen (Coder und Guesser) basierend auf den Spielkonfigurationen
-        if game_config.player_is_guesser:
-            self.coder = ComputerLocalCoder() if not game_config.computer_is_network else ComputerNetworkCoder()
-            self.guesser = PlayerGuesser()
-        else:
-            self.coder = PlayerCoder()
-            self.guesser = ComputerGuesser(code_length=config.COLUMNS)
+        # if game_config.player_is_guesser:
+        #     self.coder = ComputerLocalCoder() if not game_config.computer_is_network else ComputerNetworkCoder()
+        #     self.guesser = PlayerGuesser()
+        # else:
+        #     self.coder = PlayerCoder()
+        #     self.guesser = ComputerGuesser(code_length=config.COLUMNS)
 
     def handle_button_exit_click(self, board_view):
         self._state = MENU
@@ -191,7 +201,7 @@ class MainApp:
                         # Der Computer macht einen Rateversuch
                         if game_config.computer_is_playing and not game_config.game_is_over:
                             self.board_view.textfield_text = "Bitte bewerte den Rateversuch."
-                            guess = self.guesser.guess_code()
+                            guess = self.guesser.guess()
 
                             for index, item in enumerate(guess):
                                 self.board_view.board[game_config.current_row][index] = convert_input_to_color(item)

@@ -47,7 +47,7 @@ class ComputerGuesser:
 
         return black_pins, white_pins
 
-    def guess_code(self):
+    def guess(self):
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """

@@ -56,7 +56,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             print("Use exicsting gameid")
             code = all_codes[gameid]
             guess = json_data.get("value")
-            white_pins, black_pins = calculate_pins(list(code), list(guess))
+            black_pins, white_pins = calculate_pins(list(code), list(guess))
             value = '7' * white_pins + '8' * black_pins
             print("White Pins:", white_pins)
             print("Black Pins:", black_pins)

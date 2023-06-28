@@ -21,6 +21,7 @@ class PlayerCoder:
             game_config.code_is_coded = True
 
     def rate_move(self, board_view, guesser):
+        global game_config
         print("Solution:", game_config.solution)
         print("Guess:", game_config.board_final[game_config.current_row])
         black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])
@@ -44,7 +45,6 @@ class PlayerCoder:
 
         # Der Geheimcode wurde erraten
         if black_pins is config.COLUMNS:
-            game_config = True
             game_config.game_is_over = True
             return
 
