@@ -4,10 +4,11 @@ import numpy as np
 import pygame
 from config import config
 from config import game_config
-from constants import MENU, GAME
+from constants import MENU, GAME, ONLINE
 from gui.board_view import BoardView
 from gui.menu_controller import MenuController
 from gui.menu_view import MenuView
+from gui.online_input_view import OnlineInputView
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder
@@ -39,7 +40,7 @@ class MainApp:
 
         @state.setter
         def state(self, value):
-            if value in [MENU, GAME]:
+            if value in [MENU, GAME, ONLINE]:
                 self._state = value
             else:
                 raise ValueError("Invalid view state")
@@ -52,6 +53,8 @@ class MainApp:
 
         # Initialisierung der Boardansicht
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+
+        self.online_input_view = OnlineInputView(self.screen)
 
         # Initialisierung von Coder und Guesser
         self.coder = None
@@ -143,11 +146,16 @@ class MainApp:
         Startet die Hauptschleife der Anwendung.
         """
         while True:
+            print(self._state)
             if self._state == MENU:
                 # Menüzustand
                 for event in pygame.event.get():
                     self.menu_controller.handle_event(event)
                     self.menu_view.draw()
+
+            elif self._state == ONLINE:
+                self.online_input_view.draw()
+                pass
 
             elif self._state == GAME:
                 # Spielzustand
