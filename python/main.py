@@ -94,27 +94,67 @@ class MainApp:
             selected_buttons.append("Superhirn")
         if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
             selected_buttons.append("Supersuperhirn")
+
         if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
-            selected_buttons.append("Spieler")
+            selected_buttons.append("Spieler Rater")
         if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
-            selected_buttons.append("Computer")
+            selected_buttons.append("Computer Rater")
+
         if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
-            selected_buttons.append("Spieler")
+            selected_buttons.append("Spieler Kodierer")
         if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
-            selected_buttons.append("Computer")
+            selected_buttons.append("Computer Kodierer")
         if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
             selected_buttons.append("Server")
-        print("Ausgewählte Buttons:", selected_buttons)
-        print(self.menu_view_new.text_input1)
-        print(self.menu_view_new.text_input2)
 
-        if 'Server' in selected_buttons:
-            if len(self.menu_view_new.text_input1) > 1 and len(self.menu_view_new.text_input2) > 1:
-                print("Weiter")
-                self._state = GAME
-        elif len(selected_buttons) == 3:
-            print("Weiter")
-            self._state = GAME
+        if len(selected_buttons) != 3: return
+        elif 'Server' in selected_buttons and (len(self.menu_view_new.text_input1) < 1 or len(self.menu_view_new.text_input2) < 1): return
+
+        if "Superhirn" in selected_buttons: config.IS_SUPERSUPERHIRN = False
+        else: config.IS_SUPERSUPERHIRN = True
+
+        if "Spieler Rater" in selected_buttons:
+            game_config.guesser_is_player = True
+            game_config.guesser_is_computer = False
+        else:
+            game_config.guesser_is_computer = True
+            game_config.guesser_is_player = False
+
+        if "Spieler Kodierer" in selected_buttons:
+            game_config.coder_is_player = True
+            game_config.coder_is_computer_local = False
+            game_config.coder_is_computer_server = False
+        elif "Computer Kodierer" in selected_buttons:
+            game_config.coder_is_player = False
+            game_config.coder_is_computer_local = True
+            game_config.coder_is_computer_server = False
+        else:
+            game_config.IP_ADDRESS = self.menu_view_new.text_input1
+            game_config.PORT = self.menu_view_new.text_input2
+            game_config.coder_is_player = False
+            game_config.coder_is_computer_local = False
+            game_config.coder_is_computer_server = True
+
+        game_config.game_is_over = False
+        game_config.board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
+        game_config.solution = np.empty(config.COLUMNS, dtype=object)
+        game_config.code_is_coded = False
+        game_config.current_row = config.ROWS - 1
+
+        # Farben für die Zellen im Spielbrett
+        config.COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255),
+                  (0, 0, 0)] if config.IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255),
+                                                        (255, 128, 0), (153, 76, 0)]
+
+        # Farbennummern für die Zellen im Spielbrett
+        config.COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if config.IS_SUPERSUPERHIRN else [1, 2, 3, 4, 5, 6]
+
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.update_roles()
+
+        self._state = GAME
 
     def handle_button_exit_click(self, board_view):
         # print("handle_button_exit_click")
@@ -260,12 +300,12 @@ class MainApp:
                                 if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
                                     self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
 
-                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(config.MARGIN, 600, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(config.MARGIN, 450, BUTTON_WIDTH, BUTTON_HEIGHT)):
                             self.handle_button_start_game_click()
 
                     elif event.type == pygame.KEYDOWN:
                         if self.menu_view_new.server_button_selected:
-                            if pygame.Rect(300, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                            if pygame.Rect(config.MARGIN, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
                                     pygame.mouse.get_pos()):
                                 if event.key == pygame.K_BACKSPACE:
                                     if len(self.menu_view_new.text_input1) > 0:
@@ -274,7 +314,7 @@ class MainApp:
                                     pass
                                 else:
                                     self.menu_view_new.text_input1 += event.unicode
-                            elif pygame.Rect(550, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                            elif pygame.Rect(2 * config.MARGIN + TEXT_INPUT_WIDTH, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
                                     pygame.mouse.get_pos()):
                                 if event.key == pygame.K_BACKSPACE:
                                     if len(self.menu_view_new.text_input2) > 0:

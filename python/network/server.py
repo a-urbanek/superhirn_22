@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from logic.general_logic import calculate_pins
 
 IP_ADDRESS = "127.0.0.1"
-PORT = 8003
+PORT = 8005
 
 all_codes = {}
 

@@ -9,10 +9,6 @@ WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
 RED = (255, 0, 0)
 
-# Fenstergröße
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 500
-
 # Button-Größe
 BUTTON_WIDTH = 150
 BUTTON_HEIGHT = 50
@@ -55,35 +51,14 @@ class MenuViewUpdate:
         for button in self.marked_buttons:
             pygame.draw.rect(self.screen, RED, button, 3)
 
-    # def check_selected_buttons(self):
-    #     print("Aufgerufen")
-    #     selected_buttons = []
-    #     if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Superhirn")
-    #     if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Supersuperhirn")
-    #     if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Spieler")
-    #     if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Computer")
-    #     if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Spieler")
-    #     if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Computer")
-    #     if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
-    #         selected_buttons.append("Server")
-    #     print("Ausgewählte Buttons:", selected_buttons)
-    #     print(self.text_input1)
-    #     print(self.text_input2)
-
     def draw_text_inputs(self):
-        pygame.draw.rect(self.screen, WHITE, (300, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT))
-        pygame.draw.rect(self.screen, WHITE, (550, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT))
+        pygame.draw.rect(self.screen, WHITE, (config.config.MARGIN, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT))
+        pygame.draw.rect(self.screen, WHITE, (2 * config.config.MARGIN + TEXT_INPUT_WIDTH, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT))
         font = pygame.freetype.Font(None, 20)
-        font.render_to(self.screen, (305, 405), "Eingabe 1:", BLACK)
-        font.render_to(self.screen, (555, 405), "Eingabe 2:", BLACK)
-        font.render_to(self.screen, (305, 425), self.text_input1, BLACK)
-        font.render_to(self.screen, (555, 425), self.text_input2, BLACK)
+        font.render_to(self.screen, (config.config.MARGIN + 5, 355), "IP-Adresse:", BLACK)
+        font.render_to(self.screen, (2 * config.config.MARGIN + 5 + TEXT_INPUT_WIDTH, 355), "Port:", BLACK)
+        font.render_to(self.screen, (config.config.MARGIN + 5, 380), self.text_input1, BLACK)
+        font.render_to(self.screen, (2 * config.config.MARGIN + 5 + TEXT_INPUT_WIDTH, 380), self.text_input2, BLACK)
 
     def draw(self):
         self.screen.fill(BLACK)
@@ -92,8 +67,10 @@ class MenuViewUpdate:
         font = pygame.font.Font(None, 24)
         superhirn_text = font.render("Superhirn", True, WHITE)
         supersuperhirn_text = font.render("Supersuperhirn", True, WHITE)
-        spieler_text = font.render("Spieler", True, WHITE)
-        computer_text = font.render("Computer", True, WHITE)
+        spieler_kodierer_text = font.render("Spieler Kodierer", True, WHITE)
+        computer_kodierer_text = font.render("Computer Kodierer", True, WHITE)
+        spieler_rater_text = font.render("Spieler Rater", True, WHITE)
+        computer_rater_text = font.render("Computer Rater", True, WHITE)
         server_text = font.render("Server", True, WHITE)
         bestaetigen_text = font.render("Spiel Starten!", True, WHITE)
 
@@ -109,8 +86,8 @@ class MenuViewUpdate:
             pygame.draw.rect(self.screen, RED, (250, 50, BUTTON_WIDTH, BUTTON_HEIGHT), 3)
 
         # Ratende Person-Reihe
-        self.screen.blit(spieler_text, (80, 165))
-        self.screen.blit(computer_text, (280, 165))
+        self.screen.blit(spieler_rater_text, (80, 165))
+        self.screen.blit(computer_rater_text, (280, 165))
 
         # Überprüfen, ob Spieler-Button markiert ist
         if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
@@ -120,8 +97,8 @@ class MenuViewUpdate:
             pygame.draw.rect(self.screen, RED, (250, 150, BUTTON_WIDTH, BUTTON_HEIGHT), 3)
 
         # Kodierende Person-Reihe
-        self.screen.blit(spieler_text, (80, 265))
-        self.screen.blit(computer_text, (280, 265))
+        self.screen.blit(spieler_kodierer_text, (80, 265))
+        self.screen.blit(computer_kodierer_text, (280, 265))
         self.screen.blit(server_text, (480, 265))
 
         # Überprüfen, ob Spieler-Button markiert ist
@@ -135,8 +112,8 @@ class MenuViewUpdate:
             pygame.draw.rect(self.screen, RED, (450, 250, BUTTON_WIDTH, BUTTON_HEIGHT), 3)
 
         # Bestätigen-Button
-        pygame.draw.rect(self.screen, GRAY, (config.config.MARGIN, 600, BUTTON_WIDTH, BUTTON_HEIGHT))
-        self.screen.blit(bestaetigen_text, (config.config.MARGIN, 600))
+        pygame.draw.rect(self.screen, GRAY, (config.config.MARGIN, 450, BUTTON_WIDTH, BUTTON_HEIGHT))
+        self.screen.blit(bestaetigen_text, (config.config.MARGIN, 450))
 
         # Texteingabefelder zeichnen, wenn der "Server"-Button ausgewählt ist
         if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
@@ -218,7 +195,7 @@ class MenuViewUpdate:
                             if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.marked_buttons:
                                 self.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
 
-                    elif self.check_button_collision(mouse_pos, pygame.Rect(config.config.MARGIN, 600, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                    elif self.check_button_collision(mouse_pos, pygame.Rect(config.config.MARGIN, 350, BUTTON_WIDTH, BUTTON_HEIGHT)):
                         self.handle_button_start_game_click()
 
                 elif event.type == pygame.KEYDOWN:
