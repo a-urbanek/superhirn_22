@@ -4,16 +4,35 @@ import numpy as np
 import pygame
 from config import config
 from config import game_config
-from constants import MENU, GAME
+from constants import MENU, GAME, MENU_NEW
 from gui.board_view import BoardView
 from gui.menu_controller import MenuController
 from gui.menu_view import MenuView
+from gui.menu_view_update import MenuViewUpdate
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder
 from logic.computer_network_coder import ComputerNetworkCoder
 from logic.player_coder import PlayerCoder
 from logic.player_guesser import PlayerGuesser
+
+# Farben
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
+RED = (255, 0, 0)
+
+# Fenstergröße
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 500
+
+# Button-Größe
+BUTTON_WIDTH = 150
+BUTTON_HEIGHT = 50
+
+# Texteingabe-Größe
+TEXT_INPUT_WIDTH = 200
+TEXT_INPUT_HEIGHT = 60
 
 class MainApp:
     def __init__(self):
@@ -38,16 +57,18 @@ class MainApp:
 
         @state.setter
         def state(self, value):
-            if value in [MENU, GAME]:
+            if value in [MENU, GAME, MENU_NEW]:
                 self._state = value
             else:
                 raise ValueError("Invalid view state")
 
-        self._state = MENU
+        self._state = MENU_NEW
 
         # Initialisierung der Menüansicht und des Menücontrollers
         self.menu_view = MenuView(self.screen)
         self.menu_controller = MenuController(self.screen, self)
+
+        self.menu_view_new = MenuViewUpdate(self.screen, self.handle_button_start_game_click)
 
         # Initialisierung der Boardansicht
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
@@ -67,9 +88,37 @@ class MainApp:
 
         print("update_roles", self.coder, self.guesser)
 
+    def handle_button_start_game_click(self):
+        selected_buttons = []
+        if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Superhirn")
+        if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Supersuperhirn")
+        if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Spieler")
+        if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Computer")
+        if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Spieler")
+        if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Computer")
+        if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Server")
+        print("Ausgewählte Buttons:", selected_buttons)
+        print(self.menu_view_new.text_input1)
+        print(self.menu_view_new.text_input2)
+
+        if 'Server' in selected_buttons:
+            if len(self.menu_view_new.text_input1) > 1 and len(self.menu_view_new.text_input2) > 1:
+                print("Weiter")
+                self._state = GAME
+        elif len(selected_buttons) == 3:
+            print("Weiter")
+            self._state = GAME
+
     def handle_button_exit_click(self, board_view):
         # print("handle_button_exit_click")
-        self._state = MENU
+        self._state = MENU_NEW
         self.menu_view = MenuView(self.screen)
         self.menu_controller = MenuController(self.screen, self)
         self.menu_view.clearSetting()
@@ -142,6 +191,100 @@ class MainApp:
                 for event in pygame.event.get():
                     self.menu_controller.handle_event(event)
                     self.menu_view.draw()
+
+            elif self._state == MENU_NEW:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+
+                        if self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(config.MARGIN, 600, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            self.handle_button_start_game_click()
+
+                    elif event.type == pygame.KEYDOWN:
+                        if self.menu_view_new.server_button_selected:
+                            if pygame.Rect(300, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                                    pygame.mouse.get_pos()):
+                                if event.key == pygame.K_BACKSPACE:
+                                    if len(self.menu_view_new.text_input1) > 0:
+                                        self.menu_view_new.text_input1 = self.menu_view_new.text_input1[:-1]
+                                elif event.key == pygame.K_RETURN:
+                                    pass
+                                else:
+                                    self.menu_view_new.text_input1 += event.unicode
+                            elif pygame.Rect(550, 400, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                                    pygame.mouse.get_pos()):
+                                if event.key == pygame.K_BACKSPACE:
+                                    if len(self.menu_view_new.text_input2) > 0:
+                                        self.menu_view_new.text_input2 = self.menu_view_new.text_input2[:-1]
+                                elif event.key == pygame.K_RETURN:
+                                    pass
+                                else:
+                                    self.menu_view_new.text_input2 += event.unicode
+
+                self.menu_view_new.draw()
 
             elif self._state == GAME:
                 # Spielzustand
