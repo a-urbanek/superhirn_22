@@ -215,22 +215,26 @@ class MainApp:
         :param column: Die Spaltennummer der Zelle
         :param color: Die Farbe, mit der die Zelle eingefärbt werden soll
         """
+
+        # print("color_cell", row, column, color, isLeftBoard)
+
         if game_config.coder_is_player or game_config.guesser_is_player:
+            # print(game_config.coder_is_player or game_config.guesser_is_player)
+
             if game_config.coder_is_playing:
+
                 if not game_config.code_is_coded and isLeftBoard and row == 0:
                     game_config.board_guess[row, column] = convert_input_to_color(color)
                     board_view.board[row][column] = color
                 elif not isLeftBoard and row == (game_config.current_row - 1):
-                    game_config.feedback_board_final[row, column] = convert_input_to_color(color)
-                    board_view.board[row][column] = color
+                    game_config.feedback_board_final[row, column] = convert_input_to_color(color, True)
+                    board_view.board_feedback[row + 1][column] = color
+
             else:
-                if not isLeftBoard and row == game_config.current_row:
+                # print(game_config.current_row, row, isLeftBoard)
+                if row == game_config.current_row and isLeftBoard:
                     game_config.board_guess[row, column] = convert_input_to_color(color)
                     board_view.board[row][column] = color
-        else:
-            if not isLeftBoard and row == game_config.current_row:
-                game_config.board_guess[row, column] = convert_input_to_color(color)
-                board_view.board[row][column] = color
 
     def run(self):
         # Den Bildschirm mit einer Hintergrundfarbe füllen
