@@ -21,6 +21,8 @@ coder_is_computer_local = True
 coder_is_computer_server = False
 coder_is_playing = True
 rate_was_correct = True
+no_network_connection = False
+error_message = ""
 
 # IP-Adresse und Port für den Server
 IP_ADDRESS = "127.0.0.1"

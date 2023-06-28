@@ -4,6 +4,9 @@ from config import config
 
 
 class PlayerGuesser:
+    """
+    Klasse, die den Spielerrater repräsentiert.
+    """
 
     def make_move(self):
         """
@@ -24,9 +27,25 @@ class PlayerGuesser:
         return
 
     def evaluate_feedback(self, black_pins, white_pins):
+        """
+        Bewertet das Feedback des Spielers.
+
+        Args:
+            black_pins (int): Die Anzahl der schwarzen Pins.
+            white_pins (int): Die Anzahl der weißen Pins.
+        """
         pass
 
     def guess(self, board_view):
+        """
+        Führt einen Rateversuch des Spielers aus.
+
+        Args:
+            board_view (BoardView): Die Ansicht des Spielbretts.
+
+        Returns:
+            bool: Gibt zurück, ob der Rateversuch korrekt ausgeführt wurde.
+        """
         row_is_correct = True
 
         for column in range(config.COLUMNS):

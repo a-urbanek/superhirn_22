@@ -9,6 +9,7 @@ def convert_input_to_color(input_value, is_feedback=False):
 
     Args:
         input_value (int or tuple): Die Eingabe, die in eine Farbe konvertiert werden soll.
+        is_feedback (bool, optional): Gibt an, ob es sich um ein Feedback handelt. Standardmäßig False.
 
     Returns:
         tuple or None: Die konvertierte Farbe als Tuple (R, G, B) oder None, wenn die Eingabe ungültig ist.

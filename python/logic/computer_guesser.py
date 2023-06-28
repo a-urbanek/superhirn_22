@@ -25,27 +25,10 @@ class ComputerGuesser:
         """
         Bewertet den geratenen Code und gibt die Anzahl der schwarzen und weißen Pins zurück
         """
-        # black_pins = 0
-        # white_pins = 0
         code_copy = list(code)
         guess_copy = list(self.last_guess)
 
         black_pins, white_pins = calculate_pins(code_copy, guess_copy)
-
-        # # Überprüfe auf schwarze Pins (richtige Farbe an richtiger Position)
-        # for i in range(len(guess_copy)):
-        #     if guess_copy[i] == code_copy[i]:
-        #         black_pins += 1
-        #         code_copy[i] = None
-        #         guess_copy[i] = None
-        #
-        # # Überprüfe auf weiße Pins (richtige Farbe an falscher Position)
-        # for i in range(len(guess_copy)):
-        #     if guess_copy[i] is not None and guess_copy[i] in code_copy:
-        #         white_pins += 1
-        #         index = code_copy.index(guess_copy[i])
-        #         code_copy[index] = None
-        #         guess_copy[i] = None
 
         return black_pins, white_pins
 
@@ -53,11 +36,6 @@ class ComputerGuesser:
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """
-
-        # TODO:
-        # if len(self.possibilities) == 0:
-        #     print("Was soll hier passieren?")
-
         guess = random.choice(self.possibilities)
         self.solutions.append(guess)
         self.last_guess = guess
@@ -68,14 +46,12 @@ class ComputerGuesser:
             game_config.board_guess[game_config.current_row][index] = color
             game_config.board_final[game_config.current_row][index] = color
 
-        # game_config.coder_is_playing = True
         return True
 
     def evaluate_feedback(self, black_pins, white_pins):
         """
         Aktualisiert die Liste der möglichen Codes basierend auf dem erhaltenen Feedback
         """
-        print(black_pins, white_pins)
         self.possibilities = [code for code in self.possibilities if
                               self.evaluate_guess(code) == (black_pins, white_pins)]
 
@@ -95,6 +71,7 @@ class ComputerGuesser:
         generate_codes(config.COLORS_NUMBERS, self.code_length, [])
 
         return possibilities
+
 
 # game = ComputerGuesser(code_length=config.COLUMNS)
 # attempts_list = []

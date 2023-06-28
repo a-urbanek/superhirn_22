@@ -1,11 +1,9 @@
 import json
-
 import requests
 
 from config import config
 from config import game_config
 from constants import MENU_NEW
-
 
 class ComputerNetworkCoder:
     def __init__(self, game):
@@ -16,6 +14,7 @@ class ComputerNetworkCoder:
         self.colors = len(config.COLORS)
         self.value = ""
         self.game = game
+        game_config.no_network_connection = False
 
         # Senden eines Requests an den Server, um das Spiel zu initialisieren
         print("Game ID:", self.gameid)
@@ -39,7 +38,6 @@ class ComputerNetworkCoder:
         current_guess = game_config.board_final[game_config.current_row]
 
         string_guess = ""
-
 
         # Umwandeln des Rateversuchs in einen String
         for num in current_guess:
@@ -117,7 +115,9 @@ class ComputerNetworkCoder:
 
         except requests.exceptions.RequestException as e:
             print("Fehler beim Senden der Anfrage:", str(e))
-            self.game._state = MENU_NEW
+            game_config.no_network_connection = True
+            game_config.error_message = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
+
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()
                 error_message = response_data.get("error")

@@ -29,7 +29,7 @@ BORDER_WIDTH = 2
 FEEDBACK_COLUMNS = 5
 
 # Anzahl der Reihen im Feedback-Board
-FEEDBACK_ROWS = 10
+FEEDBACK_ROWS = ROWS - 1
 
 # Größe einer Zelle im Feedback-Board
 FEEDBACK_CELL_SIZE = 30

@@ -7,8 +7,20 @@ from logic.general_logic import calculate_pins
 
 
 class PlayerCoder:
+    """
+    Klasse, die den Codegenerator repräsentiert.
+    """
 
     def generate_code(self, board_view):
+        """
+        Generiert den Code des Spielers.
+
+        Args:
+            board_view (BoardView): Die Ansicht des Spielbretts.
+
+        Returns:
+            bool: Gibt zurück, ob der Code korrekt generiert wurde.
+        """
         board_view.textfield_text = "Lege den Code in \nder ersten Reihe fest."
         row_is_correct = True
         for column in range(config.COLUMNS):
@@ -21,11 +33,20 @@ class PlayerCoder:
             game_config.computer_is_playing = True
             game_config.code_is_coded = True
 
-        print(row_is_correct)
         return row_is_correct
 
 
     def rate_move(self, board_view, guesser):
+        """
+        Bewertet den aktuellen Zug des Spielers.
+
+        Args:
+            board_view (BoardView): Die Ansicht des Spielbretts.
+            guesser (PlayerGuesser): Der Spielerrater.
+
+        Returns:
+            tuple: Ein Tupel bestehend aus der Anzahl der schwarzen Pins, der Anzahl der weißen Pins und ob die Bewertung korrekt war.
+        """
         global game_config
         rate_was_correct = True
         black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])

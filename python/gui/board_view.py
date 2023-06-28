@@ -163,7 +163,7 @@ class BoardView:
                     radius = config.CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
-                        (0,0,0) if row == 0 and not game_config.coder_is_playing else self.board[row][column],
+                        (0,0,0) if row == 0 and not game_config.game_is_over else self.board[row][column],
                         (cell_x, cell_y),
                         radius
                     )

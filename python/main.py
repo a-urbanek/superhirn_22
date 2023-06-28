@@ -78,17 +78,28 @@ class MainApp:
         self.guesser = None
 
     def update_roles(self):
+        """
+        Aktualisiert die Rollen des Coder und Guesser basierend auf den Spielkonfigurationen.
+        """
+        if game_config.coder_is_computer_local:
+            self.coder = ComputerLocalCoder()
+        elif game_config.coder_is_computer_server:
+            self.coder = ComputerNetworkCoder(self)
+        else:
+            self.coder = PlayerCoder()
 
-        if game_config.coder_is_computer_local: self.coder = ComputerLocalCoder()
-        elif game_config.coder_is_computer_server: self.coder = ComputerNetworkCoder(self)
-        else: self.coder = PlayerCoder()
-
-        if game_config.guesser_is_computer: self.guesser = ComputerGuesser(code_length=config.COLUMNS)
-        else: self.guesser = PlayerGuesser()
+        if game_config.guesser_is_computer:
+            self.guesser = ComputerGuesser(code_length=config.COLUMNS)
+        else:
+            self.guesser = PlayerGuesser()
 
         print("update_roles", self.coder, self.guesser)
 
     def handle_button_start_game_click(self):
+        """
+        Diese Methode wird aufgerufen, wenn der "Start Game" Button im Menü geklickt wird.
+        Sie überprüft die ausgewählten Optionen und startet das Spiel mit den entsprechenden Konfigurationen.
+        """
         selected_buttons = []
         if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
             selected_buttons.append("Superhirn")
@@ -107,11 +118,15 @@ class MainApp:
         if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
             selected_buttons.append("Server")
 
-        if len(selected_buttons) != 3: return
-        elif 'Server' in selected_buttons and (len(self.menu_view_new.text_input1) < 1 or len(self.menu_view_new.text_input2) < 1): return
+        if len(selected_buttons) != 3:
+            return
+        elif 'Server' in selected_buttons and (len(self.menu_view_new.text_input1) < 1 or len(self.menu_view_new.text_input2) < 1):
+            return
 
-        if "Superhirn" in selected_buttons: config.IS_SUPERSUPERHIRN = False
-        else: config.IS_SUPERSUPERHIRN = True
+        if "Superhirn" in selected_buttons:
+            config.IS_SUPERSUPERHIRN = False
+        else:
+            config.IS_SUPERSUPERHIRN = True
 
         if "Spieler Rater" in selected_buttons:
             game_config.guesser_is_player = True
@@ -157,7 +172,10 @@ class MainApp:
         self._state = GAME
 
     def handle_button_exit_click(self, board_view):
-        # print("handle_button_exit_click")
+        """
+        Diese Methode wird aufgerufen, wenn der "Exit" Button im Spiel geklickt wird.
+        Sie setzt den Zustand der Anwendung auf das Menü zurück.
+        """
         self._state = MENU_NEW
         self.menu_view = MenuView(self.screen)
         self.menu_controller = MenuController(self.screen, self)
@@ -168,7 +186,7 @@ class MainApp:
 
     def handle_button_click(self, board_view):
         """
-        Diese Methode wird aufgerufen, wenn der Button geklickt wird.
+        Diese Methode wird aufgerufen, wenn der Button im Spiel geklickt wird.
         Sie überprüft, ob alle Farben in der aktuellen Reihe ausgewählt wurden.
         Wenn ja, wird die entsprechende Aktion ausgeführt.
         """
@@ -197,26 +215,22 @@ class MainApp:
         :param column: Die Spaltennummer der Zelle
         :param color: Die Farbe, mit der die Zelle eingefärbt werden soll
         """
-
-        # print("color_cell", row, column, color, isLeftBoard)
-
         if game_config.coder_is_player or game_config.guesser_is_player:
-            # print(game_config.coder_is_player or game_config.guesser_is_player)
-
             if game_config.coder_is_playing:
-
                 if not game_config.code_is_coded and isLeftBoard and row == 0:
                     game_config.board_guess[row, column] = convert_input_to_color(color)
                     board_view.board[row][column] = color
                 elif not isLeftBoard and row == (game_config.current_row - 1):
-                    game_config.feedback_board_final[row, column] = convert_input_to_color(color, True)
-                    board_view.board_feedback[row + 1][column] = color
-
+                    game_config.feedback_board_final[row, column] = convert_input_to_color(color)
+                    board_view.board[row][column] = color
             else:
-                # print(game_config.current_row, row, isLeftBoard)
-                if row == game_config.current_row and isLeftBoard:
+                if not isLeftBoard and row == game_config.current_row:
                     game_config.board_guess[row, column] = convert_input_to_color(color)
                     board_view.board[row][column] = color
+        else:
+            if not isLeftBoard and row == game_config.current_row:
+                game_config.board_guess[row, column] = convert_input_to_color(color)
+                board_view.board[row][column] = color
 
     def run(self):
         # Den Bildschirm mit einer Hintergrundfarbe füllen
@@ -332,10 +346,13 @@ class MainApp:
                 while self.coder is None:
                     self.update_roles()
 
+                if game_config.no_network_connection:
+                    self.board_view.textfield_text = game_config.error_message
+
                 # if game_config.coder_is_playing: print("Coder ist dran")
                 # else: print("Guesser ist dran")
 
-                if game_config.current_row == 0 or game_config.game_is_over:
+                elif game_config.current_row == 0 or game_config.game_is_over:
                     game_config.coder_is_playing = True
                     if game_config.guesser_won: self.board_view.textfield_text = "Der Rater hat in " + str(config.ROWS - game_config.current_row) + " Spielzügengewonnen!"
                     else: self.board_view.textfield_text = "Der Kodierer hat gewonnen!"
@@ -352,8 +369,10 @@ class MainApp:
                             if game_config.coder_is_computer_local:
                                 for index in range(len(game_config.solution)):
                                     # print(index, game_config.solution[index])
-                                    game_config.board_final[0][index] = convert_input_to_color(game_config.solution[index])
-                                    game_config.board_guess[0][index] = convert_input_to_color(game_config.solution[index])
+                                    # print(convert_input_to_color(game_config.solution[index]))
+                                    game_config.board_final[0][index] = game_config.solution[index]
+                                    game_config.board_guess[0][index] = game_config.solution[index]
+                                    self.board_view.board[0][index] = convert_input_to_color(game_config.solution[index])
 
                             game_config.coder_is_playing = False
                         else:
@@ -361,32 +380,30 @@ class MainApp:
 
                     # Jetzt muss geraten werden
                     elif not game_config.coder_is_playing:
-                        # print(3)
                         if not game_config.guesser_is_player:
                             if game_config.coder_is_computer_local: self.board_view.textfield_text = "Der Computer versucht den Code\nzu knacken."
                             if game_config.coder_is_computer_server: self.board_view.textfield_text = "Der Server versucht den Code\nzu knacken."
-                            # print(4)
                             self.guesser.guess(self.board_view)
-                            # print(game_config.board_final)
                             game_config.coder_is_playing = True
                         else:
                             self.board_view.textfield_text = "Versuche den Code zu knacken!"
 
                     else:
                         # Coder ist dran. muss also den Zug bewerten
-                        # print(5)
                         if not game_config.coder_is_player:
                             if game_config.coder_is_computer_local: self.board_view.textfield_text = "Der Computer bewerten deinen Zug."
                             if game_config.coder_is_computer_server: self.board_view.textfield_text = "Der Server bewerten deinen Zug."
-                            # print(6)
+
                             black_pins, white_pins = self.coder.rate_move(self.board_view, self.guesser)
-                            # print(7)
                             self.guesser.evaluate_feedback(black_pins, white_pins)
-                            # print(8)
 
                             if black_pins == config.COLUMNS:
                                 game_config.game_is_over = True
                                 game_config.guesser_won = True
+
+                                for index, color in enumerate(game_config.solution):
+                                    self.board_view.board[0][index] = convert_input_to_color(color)
+
                             else:
                                 game_config.current_row -= 1
 
