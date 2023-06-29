@@ -75,7 +75,7 @@ class MainApp:
     def update_roles(self):
         # Aktualisierung der Rollen (Coder und Guesser) basierend auf den Spielkonfigurationen
         if game_config.player_is_guesser:
-            self.coder = ComputerLocalCoder() if not game_config.computer_is_network else ComputerNetworkCoder()
+            self.coder = ComputerLocalCoder() if not self.online_settings_model.online_mode else ComputerNetworkCoder()
             self.guesser = PlayerGuesser()
         else:
             self.coder = PlayerCoder()
@@ -221,7 +221,7 @@ class MainApp:
 
                     if game_config.player_is_guesser:
                         # Der Computer muss den Geheimcode festlegen
-                        if not game_config.computer_is_network:
+                        if not self.online_settings_model.online_mode:
                             self.coder.generate_code()
 
                 else:
@@ -236,7 +236,7 @@ class MainApp:
                         if game_config.computer_is_playing:
                             white_pins, red_pins = self.coder.rate_moe()
 
-                            if game_config.computer_is_network and game_config.game_is_over:
+                            if self.online_settings_model.online_mode and game_config.game_is_over:
                                 # Das Spiel ist vorbei und der Computer hat gewonnen
                                 self.board_view.textfield_text = "Spiel ist vorbei."
                                 for i in range(config.COLUMNS):

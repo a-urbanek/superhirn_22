@@ -11,9 +11,6 @@ current_row = config.ROWS - 1
 # Variable, die angibt, ob der Computer am Zug ist
 computer_is_playing = False
 
-# Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
-computer_is_network = False
-
 # Variable, die angibt, ob der Geheimcode bereits festgelegt wurde
 code_is_coded = False
 
