@@ -1,16 +1,15 @@
 import pygame
 import sys
 from .model import Model
-from .view import View
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from main import MainApp    
 
 class Controller:
-    def __init__(self, screen, main_app: 'MainApp'):
-        self.model = Model()
-        self.view = View(screen)
+    def __init__(self, screen, main_app: 'MainApp', model):
+        self.model = model
+        self.view = main_app.online_settings_view
         self.main_app = main_app
 
     def handle_event(self, event):

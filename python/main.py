@@ -10,6 +10,7 @@ from gui.menu_controller import MenuController
 from gui.menu_view import MenuView
 from gui.menu_model import MenuModel
 from gui.mvc_online_settings.view import View as OnlineSettingsView
+from gui.mvc_online_settings.model import Model as OnlineSettingsModel
 from gui.mvc_online_settings.controller import Controller as OnlineSettingsController
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
@@ -51,9 +52,10 @@ class MainApp:
 
         self._state = MENU
 
-        self.online_settings_view = OnlineSettingsView(self.screen)
+        self.online_settings_model = OnlineSettingsModel()
+        self.online_settings_view = OnlineSettingsView(self.screen, self, self.online_settings_model)
         self.online_settings_controller = OnlineSettingsController(
-            self.screen, self)
+            self.screen, self, self.online_settings_model)
 
         # These lines of code are creating instances of the `MenuModel`, `MenuView`, and `MenuController`
         # classes, which are part of the Model-View-Controller (MVC) design pattern.
@@ -62,9 +64,6 @@ class MainApp:
         self.menu_view = MenuView(self.screen, self.menu_model)
         self.menu_controller = MenuController(self.menu_model, self.menu_view)
 
-        # Erstellen eines BoardView-Objekts mit dem Bildschirm und der Farbzellen-Methode
-        self.board_view = BoardView(
-            self.screen, self.color_cell, self.handle_button_click)
 
         # Initialisierung der Boardansicht
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
@@ -84,8 +83,8 @@ class MainApp:
 
     def handle_button_exit_click(self, board_view):
         self._state = MENU
-        self.menu_view = MenuView(self.screen)
-        self.menu_controller = MenuController(self.screen, self)
+        # self.menu_view = MenuView(self.screen)
+        # self.menu_controller = MenuController(self.screen, self)
         self.menu_view.clearSetting()
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
         self.coder = None
@@ -274,7 +273,7 @@ class MainApp:
                     if event.type == pygame.QUIT:# pylint: disable=E1101
                         pygame.quit()# pylint: disable=E1101
                         return
-                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                    elif event.type == pygame.MOUSEBUTTONDOWN:# pylint: disable=E1101
                         mouse_pos = pygame.mouse.get_pos()
                         # Linksklick
                         if event.button == 1:

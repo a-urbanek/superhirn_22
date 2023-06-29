@@ -11,7 +11,7 @@ ROWS = 11
 COLUMNS = 5
 
 # Größe einer Zelle im Spielbrett
-CELL_SIZE = 50
+CELL_SIZE = 30
 
 # Abstand zwischen den Zellen
 GAP_SIZE = 5
@@ -89,4 +89,3 @@ HEIGHT = (
     + 5 * MARGIN
     + TEXTFIELD_HEIGHT
 ) > 500 else 500
-
