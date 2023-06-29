@@ -74,15 +74,15 @@ class BoardView:
 
         self.used_colors = config.FEEDBACK_COLORS if game_config.coder_is_playing and game_config.code_is_coded else config.COLORS
 
-        # # Rahmen um das Spielfeld zeichnen
-        board_rect = pygame.Rect(
-            config.MARGIN - 1,
-            config.MARGIN - 1,
-            config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
-            1 * (config.CELL_SIZE + config.GAP_SIZE)
-        )
-        #
-        pygame.draw.rect(self.screen, (255, 0, 0), board_rect)
+        # # # Rahmen um das Spielfeld zeichnen
+        # board_rect = pygame.Rect(
+        #     config.MARGIN - 1,
+        #     config.MARGIN - 1,
+        #     config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE),
+        #     1 * (config.CELL_SIZE + config.GAP_SIZE)
+        # )
+        # #
+        # pygame.draw.rect(self.screen, (255, 0, 0), board_rect)
         #
         # # Rahmen um die Feedback-Kugeln zeichnen
         # feedback_rect = pygame.Rect(
