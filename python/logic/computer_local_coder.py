@@ -62,5 +62,5 @@ class ComputerLocalCoder:
         solution = np.random.choice(config.COLORS_NUMBERS, size=config.COLUMNS)
         game_config.solution = solution
         game_config.code_is_coded = True
-        print("Code created:", solution)
+        print("Geheimcode wurde erstellt:", solution)
         return True

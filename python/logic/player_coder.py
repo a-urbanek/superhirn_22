@@ -33,6 +33,7 @@ class PlayerCoder:
             game_config.computer_is_playing = True
             game_config.code_is_coded = True
 
+        print("Der Kodierer hat den Code festgelegt.")
         return row_is_correct
 
 

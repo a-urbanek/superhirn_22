@@ -16,19 +16,11 @@ class ComputerNetworkCoder:
         self.game = game
         game_config.no_network_connection = False
 
-        # Senden eines Requests an den Server, um das Spiel zu initialisieren
-        print("Game ID:", self.gameid)
-        print(self.colors)
-
-        if self.gameid != 0:
-            # Der Geheimcode wurde vom Server generiert
-            game_config.code_is_coded = True
-
     def generate_code(self, board_view):
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
-        print("Aufgerufen")
         game_config.coder_is_playing = False
         game_config.code_is_coded = True
+        print("Der Server hat den geheimen Code generiert.")
         return True
 
     def rate_move(self, board_view, guesser):
@@ -44,8 +36,6 @@ class ComputerNetworkCoder:
             if num != None:
                 string_guess += str(num)
 
-        print(string_guess)
-
         # Senden eines Requests an den Server, um den Rateversuch zu bewerten
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, string_guess)
 
@@ -54,11 +44,9 @@ class ComputerNetworkCoder:
         black_pins = self.value.count('8')
 
         for index in range(black_pins):
-            print(index)
             board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
 
         for index in range(white_pins):
-            print(index)
             board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
 
         if black_pins is config.COLUMNS:
@@ -99,7 +87,7 @@ class ComputerNetworkCoder:
 
         headers = {"Content-Type": "application/json"}
 
-        print("Send:", data)
+        print("An den Server gesendet:", data)
 
         try:
             # Senden einer POST-Anfrage an den Server
@@ -109,15 +97,14 @@ class ComputerNetworkCoder:
 
             if response.status_code == 200:
                 # Extrahieren der Antwortdaten
-                print("Received:", response_data)
+                print("Antwort vom Server:", response_data)
                 self.gameid = response_data.get("gameid", gameid)
                 self.value = response_data["value"]
 
         except requests.exceptions.RequestException as e:
-            print("Fehler beim Senden der Anfrage:", str(e))
             game_config.no_network_connection = True
             game_config.error_message = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
-
+            print("Es konnte keine Verbindung zum Server http://" + game_config.IP_ADDRESS + ":" + game_config.PORT + " aufgebaut werden.")
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()
                 error_message = response_data.get("error")

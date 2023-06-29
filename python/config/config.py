@@ -8,7 +8,7 @@ ROWS = 11
 # ROWS = 3  # Beispiel: Anzahl der Reihen auf 3 reduziert
 
 # Anzahl der Spalten
-COLUMNS = 5
+COLUMNS = 5 if IS_SUPERSUPERHIRN else 4
 
 # Größe einer Zelle im Spielbrett
 CELL_SIZE = 50
@@ -26,7 +26,7 @@ BORDER_COLOR = (0, 0, 0)
 BORDER_WIDTH = 2
 
 # Anzahl der Spalten im Feedback-Board
-FEEDBACK_COLUMNS = 5
+FEEDBACK_COLUMNS = 5 if IS_SUPERSUPERHIRN else 4
 
 # Anzahl der Reihen im Feedback-Board
 FEEDBACK_ROWS = ROWS - 1

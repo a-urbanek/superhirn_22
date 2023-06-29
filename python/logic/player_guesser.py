@@ -56,4 +56,5 @@ class PlayerGuesser:
             game_config.board_final[game_config.current_row] = game_config.board_guess[game_config.current_row]
             game_config.computer_is_playing = True
 
+        print("Der Rater hat versucht den Code zu knacken.")
         return row_is_correct

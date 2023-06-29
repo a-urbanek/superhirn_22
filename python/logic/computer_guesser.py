@@ -36,6 +36,7 @@ class ComputerGuesser:
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """
+        print("Anzahl der verbelibenden Möglichkeiten:", len(self.possibilities))
         guess = random.choice(self.possibilities)
         self.solutions.append(guess)
         self.last_guess = guess
