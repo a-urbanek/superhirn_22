@@ -214,6 +214,8 @@ class MainApp:
         Sie überprüft, ob alle Farben in der aktuellen Reihe ausgewählt wurden.
         Wenn ja, wird die entsprechende Aktion ausgeführt.
         """
+        if game_config.game_is_over: return
+
         if game_config.guesser_is_player or game_config.coder_is_player:
             if game_config.coder_is_playing:
                 if not game_config.code_is_coded:
@@ -379,7 +381,7 @@ class MainApp:
 
                 elif game_config.current_row == 0 or game_config.game_is_over:
                     game_config.coder_is_playing = True
-                    if game_config.guesser_won: self.board_view.textfield_text = "Der Rater hat in " + str(config.ROWS - game_config.current_row) + " Spielzügengewonnen!"
+                    if game_config.guesser_won: self.board_view.textfield_text = "Der Rater hat in " + str(config.ROWS - game_config.current_row) + " Spielzügen gewonnen!"
                     else: self.board_view.textfield_text = "Der Kodierer hat gewonnen!"
 
                 else:

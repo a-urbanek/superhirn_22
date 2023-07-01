@@ -1,5 +1,7 @@
 import random
 
+from matplotlib import pyplot as plt
+
 from config import config
 from config import game_config
 from logic.color_mapping import convert_input_to_color
@@ -41,11 +43,12 @@ class ComputerGuesser:
         self.solutions.append(guess)
         self.last_guess = guess
 
-        for index, color in enumerate(guess):
-            # Board View hinzufügen
-            board_view.board[game_config.current_row][index] = convert_input_to_color(color)
-            game_config.board_guess[game_config.current_row][index] = color
-            game_config.board_final[game_config.current_row][index] = color
+        if board_view != None:
+            for index, color in enumerate(guess):
+                # Board View hinzufügen
+                board_view.board[game_config.current_row][index] = convert_input_to_color(color)
+                game_config.board_guess[game_config.current_row][index] = color
+                game_config.board_final[game_config.current_row][index] = color
 
         return True
 
@@ -73,12 +76,14 @@ class ComputerGuesser:
 
         return possibilities
 
-
+# import matplotlib.pyplot as plt
+# import random
+#
 # game = ComputerGuesser(code_length=config.COLUMNS)
 # attempts_list = []
 #
 # for i in range(10000):
-#     if i % 100 == 0:
+#     if i % 1000 == 0:
 #         print(i)
 #     guess = None
 #     attempts = 0
@@ -88,7 +93,8 @@ class ComputerGuesser:
 #
 #     while guess != solution:
 #         attempts += 1
-#         guess = game.guess_code()
+#         guess = random.choice(game.possibilities)
+#         game.last_guess = guess
 #         black_pins, white_pins = game.evaluate_guess(solution)
 #         game.evaluate_feedback(black_pins, white_pins)
 #
@@ -99,18 +105,36 @@ class ComputerGuesser:
 # slowest_attempt = max(attempts_list)
 # average_attempt = sum(attempts_list) / len(attempts_list)
 #
-# # Plotten des Histogramms
-# plt.figure(figsize=(10, 10))
-# plt.hist(attempts_list, bins=range(min(attempts_list), max(attempts_list) + 2), edgecolor='black')
-# plt.xlabel('Anzahl der Versuche')
-# plt.ylabel('Häufigkeit')
-# plt.title('Verteilung der Versuche')
-# plt.grid(True)
+# # Erstellung des Subplots
+# fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12))
+#
+# # Plotten des Barplots
+# unique_values = list(set(attempts_list))
+# unique_values.sort()
+# frequency = [attempts_list.count(value) for value in unique_values]
+# ax1.bar(unique_values, frequency, edgecolor='black', color='lightblue')
+# ax1.set_xlabel('Anzahl der Versuche')
+# ax1.set_ylabel('Häufigkeit')
+# ax1.set_title('Verteilung der Versuche')
+# ax1.grid(True)
 #
 # # Markierung des Mittelwerts
 # mean_value = average_attempt
-# plt.axvline(mean_value, color='red', linestyle='dashed', linewidth=2)
-# plt.text(mean_value + 0.1, plt.ylim()[1] * 0.97, f'Mittelwert: {mean_value:.2f}', color='black',font = {'size': 15})
+# ax1.axvline(mean_value, color='red', linestyle='dashed', linewidth=2)
+# ax1.text(mean_value + 0.1, ax1.get_ylim()[1] * 0.97, f'Mittelwert: {mean_value:.2f}', color='black', font={'size': 12})
+#
+# # Plotten des Boxplots
+# boxprops = dict(linewidth=2, edgecolor='blue', facecolor='lightblue')
+# medianprops = dict(linewidth=2, color='red')
+# bp = ax2.boxplot(attempts_list, vert=False, patch_artist=True)
+# for box in bp['boxes']:
+#     box.set(facecolor='lightblue')
+#     box.set(**boxprops)
+# for median in bp['medians']:
+#     median.set(**medianprops)
+# ax2.set_xlabel('Versuche')
+# ax2.set_title('Verteilung der Versuche')
+# ax2.grid(True)
 #
 # plt.tight_layout()
 # plt.show()

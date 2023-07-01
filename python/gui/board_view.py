@@ -295,6 +295,6 @@ class BoardView:
 
     def check_if_first_row_is_not_visible(self, row):
         if row != 0: return False
-        elif game_config.coder_is_player: return False
+        elif game_config.coder_is_player and game_config.coder_is_playing: return False
         elif game_config.game_is_over: return False
         else: return True
