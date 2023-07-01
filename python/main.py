@@ -73,7 +73,7 @@ class MainApp:
         self.menu_view_new = MenuViewUpdate(self.screen, self.handle_button_start_game_click)
 
         # Initialisierung der Boardansicht
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.handle_button_restart_click)
 
         # Initialisierung von Coder und Guesser
         self.coder = None
@@ -182,7 +182,7 @@ class MainApp:
         # Erstellen des Boards, das die Bewertungen des Raters enthält
         game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
 
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.handle_button_restart_click)
         self.update_roles()
 
         self._state = GAME
@@ -207,6 +207,10 @@ class MainApp:
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
         self.coder = None
         self.guesser = None
+
+    def handle_button_restart_click(self, board_view):  
+        #Wie muss ich die Config Einstellungen bearbeiten damit es wieder zurückgesetzt ist
+        pass
 
     def handle_button_click(self, board_view):
         """
