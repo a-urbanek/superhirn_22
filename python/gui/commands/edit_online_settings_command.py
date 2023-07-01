@@ -10,8 +10,8 @@ from constants import ONLINE_SETTINGS
 class EditOnlineSettings(Command):
     
     def execute(self):
-        print("Online Settings")
+        print("Settings")
         self.main_app.set_state(ONLINE_SETTINGS)
 
     def __str__(self):
-        return "Online Settings"
+        return "Settings"
