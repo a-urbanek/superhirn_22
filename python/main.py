@@ -163,7 +163,7 @@ class MainApp:
         self.menu_view = MenuView(self.screen)
         self.menu_controller = MenuController(self.screen, self)
         self.menu_view.clearSetting()
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.start_new_game)
         self.coder = None
         self.guesser = None
 
