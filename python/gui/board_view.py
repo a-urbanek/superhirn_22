@@ -6,7 +6,7 @@ import config.game_config as game_config
 
 
 class BoardView:
-    def __init__(self, screen, color_cell_handler, button_callback, button_exit_callback):
+    def __init__(self, screen, color_cell_handler, button_callback, button_exit_callback, button_restart_callback):
         """
         Initialisiert die BoardView-Klasse.
 
@@ -19,6 +19,9 @@ class BoardView:
         self.color_cell_handler = color_cell_handler
         self.button_callback = button_callback
         self.button_exit_callback = button_exit_callback
+        # Neuer Restart Button
+        self.button_restart_callback = button_restart_callback
+
         self.dragging = False
         self.dragged_color = None
         self.start_pos = (0, 0)
@@ -46,6 +49,12 @@ class BoardView:
                                        config.MARGIN,
                                        config.BUTTON_WIDTH, config.BUTTON_HEIGHT)
 
+        self.button_restart_rect = pygame.Rect(config.COLUMNS * (config.CELL_SIZE + config.GAP_SIZE) +
+                                               config.COLUMNS * (config.FEEDBACK_CELL_SIZE + config.GAP_SIZE) +
+                                               3 * config.MARGIN,
+                                               3 * config.MARGIN + 2 * config.BUTTON_HEIGHT,
+                                               config.BUTTON_WIDTH, config.BUTTON_HEIGHT)
+
         self.button_color = (255, 0, 0)
         self.button_text = "Bestätigen"
         self.button_font = pygame.font.Font(None, 24)
@@ -60,10 +69,16 @@ class BoardView:
         self.button_exit_text = "Beenden"
         self.button_exit_font = pygame.font.Font(None, 24)
 
+        self.button_restart_color = (0, 255, 0)
+        self.button_restart_text = "Neustart"
+        self.button_restart_font = pygame.font.Font(None, 24)
+
         self.textfield_text = ""
 
         # Feedback-Kugeln
         self.feedback_balls = [[None] * config.FEEDBACK_COLUMNS for _ in range(config.FEEDBACK_ROWS)]
+
+
 
     def draw(self):
         """
@@ -180,6 +195,12 @@ class BoardView:
         button_exit_text_rect = button_exit_text_surface.get_rect(center=self.button_exit_rect.center)
         self.screen.blit(button_exit_text_surface, button_exit_text_rect)
 
+        # Zeichnen des Neustart Buttons
+        pygame.draw.rect(self.screen, self.button_restart_color, self.button_restart_rect)
+        button_restart_text_surface = self.button_restart_font.render(self.button_restart_text, True, (255, 255, 255))
+        button_restart_text_rect = button_restart_text_surface.get_rect(center=self.button_restart_rect.center)
+        self.screen.blit(button_restart_text_surface, button_restart_text_rect)
+
         # Zeichnen des Textfelds
         textfield_color = (255, 255, 255)
         textfield_font = pygame.font.SysFont(None, 40)
@@ -219,6 +240,8 @@ class BoardView:
             self.button_callback(self)
         elif self.button_exit_rect.collidepoint(drop_pos):
             self.button_exit_callback(self)
+        elif self.button_restart_rect.collidepoint(drop_pos):  # Geändert: Hinzugefügt
+            self.button_restart_callback()  # Geändert: Hinzugefügt
         else:
             # Einfärben der Zelle, wenn sie im Spielbrettbereich liegt
             drop_row, drop_column, isLeftBoard = self.get_clicked_cell(drop_pos)
