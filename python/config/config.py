@@ -1,14 +1,14 @@
 # Konfigurationen für das Spiel
 
 # Variable, die angibt, ob der Spielmodi Superhirn aktiv ist
-IS_SUPERHIRN = True
+IS_SUPERSUPERHIRN = True
 
 # Anzahl der Reihen (eine zusätzliche Reihe für die Farben)
 ROWS = 11
 # ROWS = 3  # Beispiel: Anzahl der Reihen auf 3 reduziert
 
 # Anzahl der Spalten
-COLUMNS = 5
+COLUMNS = 5 if IS_SUPERSUPERHIRN else 4
 
 # Größe einer Zelle im Spielbrett
 CELL_SIZE = 30
@@ -26,10 +26,10 @@ BORDER_COLOR = (0, 0, 0)
 BORDER_WIDTH = 2
 
 # Anzahl der Spalten im Feedback-Board
-FEEDBACK_COLUMNS = 5
+FEEDBACK_COLUMNS = 5 if IS_SUPERSUPERHIRN else 4
 
 # Anzahl der Reihen im Feedback-Board
-FEEDBACK_ROWS = 10
+FEEDBACK_ROWS = ROWS - 1
 
 # Größe einer Zelle im Feedback-Board
 FEEDBACK_CELL_SIZE = 30
@@ -38,10 +38,10 @@ FEEDBACK_CELL_SIZE = 30
 FEEDBACK_GAP_SIZE = GAP_SIZE
 
 # Farben für die Zellen im Spielbrett
-COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255), (0, 0, 0)] if IS_SUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0)]
+COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255), (0, 0, 0)] if IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0)]
 
 # Farbennummern für die Zellen im Spielbrett
-COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if IS_SUPERHIRN else [1, 2, 3, 4, 5, 6]
+COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if IS_SUPERSUPERHIRN else [1, 2, 3, 4, 5, 6]
 
 # Farben für die Zellen im Feedback-Board
 FEEDBACK_COLORS = [(255, 255, 255), (0, 0, 0)]

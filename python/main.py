@@ -12,13 +12,35 @@ from gui.menu_model import MenuModel
 from gui.mvc_online_settings.view import View as OnlineSettingsView
 from gui.mvc_online_settings.model import Model as OnlineSettingsModel
 from gui.mvc_online_settings.controller import Controller as OnlineSettingsController
+from constants import MENU, GAME, MENU_NEW
+from gui.board_view import BoardView
+from gui.menu_controller import MenuController
+from gui.menu_view import MenuView
+from gui.menu_view_update import MenuViewUpdate
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder
 from logic.computer_network_coder import ComputerNetworkCoder
-from logic.general_logic import calculate_pins
 from logic.player_coder import PlayerCoder
 from logic.player_guesser import PlayerGuesser
+
+# Farben
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
+RED = (255, 0, 0)
+
+# Fenstergröße
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 500
+
+# Button-Größe
+BUTTON_WIDTH = 150
+BUTTON_HEIGHT = 50
+
+# Texteingabe-Größe
+TEXT_INPUT_WIDTH = 200
+TEXT_INPUT_HEIGHT = 60
 
 class MainApp:
     def __init__(self):
@@ -36,6 +58,8 @@ class MainApp:
 
         self.time = time.time() - 1000
 
+        self.last_player_is_coder = game_config.coder_is_playing
+
         # Property und Setter für den Zustand der Anwendung (Menü oder Spiel)
         @property
         def state(self):
@@ -43,14 +67,12 @@ class MainApp:
 
         @state.setter
         def state(self, value):
-            if value in [MENU, GAME, ONLINE_SETTINGS]:
+            if value in [MENU, GAME, ONLINE_SETTINGS, MENU_NEW]:
                 print("setting..." + value)
-
-                self._state = value
             else:
                 raise ValueError("Invalid view state")
 
-        self._state = MENU
+        self._state = MENU_NEW
 
         self.online_settings_model = OnlineSettingsModel()
         self.online_settings_view = OnlineSettingsView(self.screen, self, self.online_settings_model)
@@ -65,6 +87,8 @@ class MainApp:
         self.menu_controller = MenuController(self.menu_model, self.menu_view)
 
 
+        self.menu_view_new = MenuViewUpdate(self.screen, self.handle_button_start_game_click)
+
         # Initialisierung der Boardansicht
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
 
@@ -73,18 +97,136 @@ class MainApp:
         self.guesser = None
 
     def update_roles(self):
-        # Aktualisierung der Rollen (Coder und Guesser) basierend auf den Spielkonfigurationen
-        if game_config.player_is_guesser:
-            self.coder = ComputerLocalCoder() if not self.online_settings_model.online_mode else ComputerNetworkCoder()
-            self.guesser = PlayerGuesser()
+        """
+        Aktualisiert die Rollen des Coder und Guesser basierend auf den Spielkonfigurationen.
+        """
+        if game_config.coder_is_computer_local:
+            self.coder = ComputerLocalCoder()
+        elif game_config.coder_is_computer_server:
+            self.coder = ComputerNetworkCoder(self)
         else:
             self.coder = PlayerCoder()
+
+        if game_config.guesser_is_computer:
             self.guesser = ComputerGuesser(code_length=config.COLUMNS)
+        else:
+            self.guesser = PlayerGuesser()
+
+        print("Die Spieler wurden initialisiert.")
+
+    def handle_button_start_game_click(self):
+        """
+        Diese Methode wird aufgerufen, wenn der "Start Game" Button im Menü geklickt wird.
+        Sie überprüft die ausgewählten Optionen und startet das Spiel mit den entsprechenden Konfigurationen.
+        """
+        selected_buttons = []
+        if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Superhirn")
+        if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Supersuperhirn")
+
+        if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Spieler Rater")
+        if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Computer Rater")
+
+        if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Spieler Kodierer")
+        if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Computer Kodierer")
+        if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+            selected_buttons.append("Server")
+
+        if len(selected_buttons) != 3:
+            return
+        elif 'Server' in selected_buttons and (len(self.menu_view_new.text_input1) < 1 or len(self.menu_view_new.text_input2) < 1):
+            return
+
+        if "Superhirn" in selected_buttons:
+            config.IS_SUPERSUPERHIRN = False
+        else:
+            config.IS_SUPERSUPERHIRN = True
+
+        if "Spieler Rater" in selected_buttons:
+            game_config.guesser_is_player = True
+            game_config.guesser_is_computer = False
+        else:
+            game_config.guesser_is_computer = True
+            game_config.guesser_is_player = False
+
+        if "Spieler Kodierer" in selected_buttons:
+            game_config.coder_is_player = True
+            game_config.coder_is_computer_local = False
+            game_config.coder_is_computer_server = False
+        elif "Computer Kodierer" in selected_buttons:
+            game_config.coder_is_player = False
+            game_config.coder_is_computer_local = True
+            game_config.coder_is_computer_server = False
+        else:
+            game_config.IP_ADDRESS = self.menu_view_new.text_input1
+            game_config.PORT = self.menu_view_new.text_input2
+            game_config.coder_is_player = False
+            game_config.coder_is_computer_local = False
+            game_config.coder_is_computer_server = True
+
+        game_config.game_is_over = False
+        game_config.board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+        game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
+        game_config.solution = np.empty(config.COLUMNS, dtype=object)
+        game_config.code_is_coded = False
+        game_config.current_row = config.ROWS - 1
+        game_config.error_message = ""
+        game_config.no_network_connection = False
+
+        # Farben für die Zellen im Spielbrett
+        config.COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255),
+                  (0, 0, 0)] if config.IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255),
+                                                        (255, 128, 0), (153, 76, 0)]
+
+        # Farbennummern für die Zellen im Spielbrett
+        config.COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if config.IS_SUPERSUPERHIRN else [1, 2, 3, 4, 5, 6]
+
+        config.FEEDBACK_COLUMNS = 5 if config.IS_SUPERSUPERHIRN else 4
+        config.COLUMNS = 5 if config.IS_SUPERSUPERHIRN else 4
+
+        # Erstellen des Rate-Boards, auf dem der Spieler seinen Rateversuch macht
+        game_config.board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+
+        # Erstellen des Boards, das alle logisch sinnvollen Eingaben enthält
+        game_config.board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
+
+        # Erstellen des Boards, das die Bewertungen des Raters enthält
+        game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
+
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.update_roles()
+
+        self._state = GAME
+
+        print()
+        print("############################################")
+        print("#                                          #")
+        print("#    Es wurde ein neues Spiel gestartet.   #")
+        print("#                                          #")
+        print("############################################")
+        print()
 
     def handle_button_exit_click(self, board_view):
         self._state = MENU
         # self.menu_view = MenuView(self.screen)
         # self.menu_controller = MenuController(self.screen, self)
+        # """
+        #         """
+        #         Diese Methode wird aufgerufen, wenn der "Exit" Button im Spiel geklickt wird.
+        #         Sie setzt den Zustand der Anwendung auf das Menü zurück.
+        #         """
+        #         self._state = MENU_NEW
+        #         self.menu_view = MenuView(self.screen)
+        #         self.menu_controller = MenuController(self.screen, self)
+        # """
+
+
         self.menu_view.clearSetting()
         self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
         self.coder = None
@@ -102,63 +244,23 @@ class MainApp:
 
     def handle_button_click(self, board_view):
         """
-        Diese Methode wird aufgerufen, wenn der Button geklickt wird.
+        Diese Methode wird aufgerufen, wenn der Button im Spiel geklickt wird.
         Sie überprüft, ob alle Farben in der aktuellen Reihe ausgewählt wurden.
         Wenn ja, wird die entsprechende Aktion ausgeführt.
         """
-
-        if not game_config.computer_is_playing:
-            if not game_config.code_is_coded and not game_config.player_is_guesser:
-                # Der Spieler legt den Geheimcode fest
-                row_is_correct = True
-                for column in range(config.COLUMNS):
-                    if game_config.board_guess[0][column] is None:
-                        row_is_correct = False
-
-                if row_is_correct:
-                    game_config.board_final[0] = game_config.board_guess[0]
-                    game_config.solution = game_config.board_guess[0]
-                    game_config.computer_is_playing = True
-                    game_config.code_is_coded = True
-
-            elif game_config.player_is_guesser:
-                # Der Spieler macht einen Rateversuch
-                row_is_correct = True
-                for column in range(config.COLUMNS):
-                    if game_config.board_guess[game_config.current_row][column] is None:
-                        row_is_correct = False
-
-                if row_is_correct:
-                    game_config.board_final[game_config.current_row] = game_config.board_guess[game_config.current_row]
-                    game_config.computer_is_playing = True
-
-            elif not game_config.player_is_guesser:
-                # Der Spieler bewertet einen Rateversuch des Computers
-                print("Solution:", game_config.solution)
-                print("Guess:", game_config.board_final[game_config.current_row])
-                black_temp, white_temp = calculate_pins(game_config.solution, game_config.board_final[game_config.current_row])
-
-                white_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 7)
-                black_pins = np.count_nonzero(game_config.feedback_board_final[game_config.current_row - 1] == 8)
-
-                if black_temp != black_pins or white_temp != white_pins:
-                    print("Falsche Bewertung")
-                    self.board_view.textfield_text = "Falsche Bewertung!"
-                    return
-
-                # Der Geheimcode wurde erraten
-                if black_pins is config.COLUMNS:
-                    game_config.player_won = True
-                    game_config.game_is_over = True
-                    return
-
-                self.guesser.evaluate_feedback(black_pins, white_pins)
-                game_config.current_row -= 1
-                game_config.computer_is_playing = True
-
-                # Es gibt keine Rateversuche mehr
-                if game_config.current_row == 0:
-                    game_config.game_is_over = True
+        if game_config.guesser_is_player or game_config.coder_is_player:
+            if game_config.coder_is_playing:
+                if not game_config.code_is_coded:
+                    if self.coder.generate_code(self.board_view):
+                        game_config.coder_is_playing = False
+                else:
+                    black_pins, white_pins, rate_was_correct = self.coder.rate_move(self.board_view, self.guesser)
+                    game_config.rate_was_correct = rate_was_correct
+                    if game_config.rate_was_correct:
+                        game_config.coder_is_playing = False
+            else:
+                if self.guesser.guess(self.board_view):
+                    game_config.coder_is_playing = True
 
     def color_cell(self, board_view, row, column, color, isLeftBoard):
         """
@@ -170,25 +272,20 @@ class MainApp:
         :param column: Die Spaltennummer der Zelle
         :param color: Die Farbe, mit der die Zelle eingefärbt werden soll
         """
+        if game_config.coder_is_player or game_config.guesser_is_player:
+            if game_config.coder_is_playing:
 
-        if color == None or game_config.game_is_over:
-            return
+                if not game_config.code_is_coded and isLeftBoard and row == 0:
+                    game_config.board_guess[row, column] = convert_input_to_color(color)
+                    board_view.board[row][column] = color
+                elif not isLeftBoard and row == (game_config.current_row - 1):
+                    game_config.feedback_board_final[row, column] = convert_input_to_color(color, True)
+                    board_view.board_feedback[row + 1][column] = color
 
-        if not game_config.computer_is_playing:
-            if not game_config.code_is_coded and not game_config.player_is_guesser and isLeftBoard and row == 0:
-                # Der Spieler legt den Geheimcode fest
-                game_config.board_guess[row, column] = convert_input_to_color(color)
-                board_view.board[row][column] = color
-
-            elif row == game_config.current_row and game_config.player_is_guesser and isLeftBoard:
-                # Der Spieler macht einen Rateversuch
-                game_config.board_guess[row, column] = convert_input_to_color(color)
-                board_view.board[row][column] = color
-
-            elif row == (game_config.current_row - 1) and not game_config.player_is_guesser and not isLeftBoard:
-                # Der Spieler bewertet einen Rateversuch des Computers
-                game_config.feedback_board_final[row, column] = convert_input_to_color(color, True)
-                board_view.board_feedback[row + 1][column] = color
+            else:
+                if row == game_config.current_row and isLeftBoard:
+                    game_config.board_guess[row, column] = convert_input_to_color(color)
+                    board_view.board[row][column] = color
 
     def run(self):
         # Den Bildschirm mit einer Hintergrundfarbe füllen
@@ -208,66 +305,183 @@ class MainApp:
                 for event in pygame.event.get():
                     self.online_settings_controller.handle_event(event)
                     self.online_settings_view.draw()
+            elif self._state == MENU_NEW:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+
+                        if self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 50, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 150, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            if pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                self.menu_view_new.marked_buttons.remove(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                            else:
+                                self.menu_view_new.marked_buttons.append(pygame.Rect(450, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(50, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+                                if pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT) in self.menu_view_new.marked_buttons:
+                                    self.menu_view_new.marked_buttons.remove(pygame.Rect(250, 250, BUTTON_WIDTH, BUTTON_HEIGHT))
+
+                        elif self.menu_view_new.check_button_collision(mouse_pos, pygame.Rect(config.MARGIN, 450, BUTTON_WIDTH, BUTTON_HEIGHT)):
+                            self.handle_button_start_game_click()
+
+                    elif event.type == pygame.KEYDOWN:
+                        if self.menu_view_new.server_button_selected:
+                            if pygame.Rect(config.MARGIN, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                                    pygame.mouse.get_pos()):
+                                if event.key == pygame.K_BACKSPACE:
+                                    if len(self.menu_view_new.text_input1) > 0:
+                                        self.menu_view_new.text_input1 = self.menu_view_new.text_input1[:-1]
+                                elif event.key == pygame.K_RETURN:
+                                    pass
+                                else:
+                                    self.menu_view_new.text_input1 += event.unicode
+                            elif pygame.Rect(2 * config.MARGIN + TEXT_INPUT_WIDTH, 350, TEXT_INPUT_WIDTH, TEXT_INPUT_HEIGHT).collidepoint(
+                                    pygame.mouse.get_pos()):
+                                if event.key == pygame.K_BACKSPACE:
+                                    if len(self.menu_view_new.text_input2) > 0:
+                                        self.menu_view_new.text_input2 = self.menu_view_new.text_input2[:-1]
+                                elif event.key == pygame.K_RETURN:
+                                    pass
+                                else:
+                                    self.menu_view_new.text_input2 += event.unicode
+
+                self.menu_view_new.draw()
 
             elif self._state == GAME:
                 # Spielzustand
+                # print( game_config.coder_is_playing, self.last_player_is_coder)
+
+                # print(config.IS_SUPERSUPERHIRN)
+                # if game_config.coder_is_playing != self.last_player_is_coder:
+                #     if game_config.coder_is_playing: print("Der Kodierer ist an der Reihe.")
+                #     else: print("Der Rater ist an der Reihe.")
+                #     self.last_player_is_coder = game_config.coder_is_player
 
                 while self.coder is None:
                     self.update_roles()
 
-                if not game_config.code_is_coded:
-                    # Der Geheimcode wurde noch nicht festgelegt
-                    self.board_view.textfield_text = "Lege den Code fest in \nder ersten Reihe."
+                if game_config.no_network_connection:
+                    self.board_view.textfield_text = game_config.error_message
 
-                    if game_config.player_is_guesser:
-                        # Der Computer muss den Geheimcode festlegen
-                        if not self.online_settings_model.online_mode:
-                            self.coder.generate_code()
+                elif game_config.current_row == 0 or game_config.game_is_over:
+                    game_config.coder_is_playing = True
+                    if game_config.guesser_won: self.board_view.textfield_text = "Der Rater hat in " + str(config.ROWS - game_config.current_row) + " Spielzügengewonnen!"
+                    else: self.board_view.textfield_text = "Der Kodierer hat gewonnen!"
 
                 else:
-                    # Der Geheimcode wurde festgelegt
-                    for index, color in enumerate(game_config.solution):
-                        self.board_view.board[0][index] = convert_input_to_color(color)
+                    if not game_config.code_is_coded:
+                        # falls der code vom spieler generiert wird, wird self.coder.generate_code in handle_button_click aufgerufen
+                        if not game_config.coder_is_player:
+                            if game_config.coder_is_computer_local: self.board_view.textfield_text = "Der Computer denkt sich einen Code aus."
+                            if game_config.coder_is_computer_server: self.board_view.textfield_text = "Der Server denkt sich einen Code aus."
+                            self.coder.generate_code(self.board_view)
 
-                    if game_config.player_is_guesser:
-                        # Der Spieler macht einen Rateversuch
-                        self.board_view.textfield_text = "Mach einen Rateversuch."
+                            if game_config.coder_is_computer_local:
+                                for index in range(len(game_config.solution)):
+                                    game_config.board_final[0][index] = game_config.solution[index]
+                                    game_config.board_guess[0][index] = game_config.solution[index]
+                                    self.board_view.board[0][index] = convert_input_to_color(game_config.solution[index])
 
-                        if game_config.computer_is_playing:
-                            white_pins, red_pins = self.coder.rate_moe()
+                            game_config.coder_is_playing = False
+                        else:
+                            self.board_view.textfield_text = "Lege den geheimen Code in der ersten\nReihe fest."
 
-                            if self.online_settings_model.online_mode and game_config.game_is_over:
-                                # Das Spiel ist vorbei und der Computer hat gewonnen
-                                self.board_view.textfield_text = "Spiel ist vorbei."
-                                for i in range(config.COLUMNS):
-                                    self.board_view.board[0][i] = convert_input_to_color(game_config.board_final[game_config.current_row][i])
-
-                            # Färbe die Pins entsprechend der Bewertung ein
-                            for column in range(red_pins):
-                                self.board_view.board_feedback[game_config.current_row][column] = config.FEEDBACK_COLORS[1]
-
-                            for column in range(white_pins):
-                                self.board_view.board_feedback[game_config.current_row][red_pins + column] = config.FEEDBACK_COLORS[0]
-
-                            game_config.current_row -= 1
-
-                            if game_config.current_row == 0:
-                                game_config.game_is_over = True
-
-                            game_config.computer_is_playing = False
-
+                    # Jetzt muss geraten werden
+                    elif not game_config.coder_is_playing:
+                        if not game_config.guesser_is_player:
+                            if game_config.coder_is_computer_local: self.board_view.textfield_text = "Der Computer versucht den Code\nzu knacken."
+                            if game_config.coder_is_computer_server: self.board_view.textfield_text = "Der Server versucht den Code\nzu knacken."
+                            self.guesser.guess(self.board_view)
+                            game_config.coder_is_playing = True
+                        else:
+                            self.board_view.textfield_text = "Versuche den Code zu knacken!"
 
                     else:
-                        # Der Computer macht einen Rateversuch
-                        if game_config.computer_is_playing and not game_config.game_is_over:
-                            self.board_view.textfield_text = "Bitte bewerte den Rateversuch."
-                            guess = self.guesser.guess_code()
+                        # Coder ist dran. muss also den Zug bewerten
+                        if not game_config.coder_is_player:
+                            if game_config.coder_is_computer_local: self.board_view.textfield_text = "Der Computer bewerten deinen Zug."
+                            if game_config.coder_is_computer_server: self.board_view.textfield_text = "Der Server bewerten deinen Zug."
 
-                            for index, item in enumerate(guess):
-                                self.board_view.board[game_config.current_row][index] = convert_input_to_color(item)
-                                game_config.board_guess[game_config.current_row][index] = item
-                                game_config.board_final[game_config.current_row][index] = item
-                                game_config.computer_is_playing = False
+                            black_pins, white_pins = self.coder.rate_move(self.board_view, self.guesser)
+                            self.guesser.evaluate_feedback(black_pins, white_pins)
+
+                            if black_pins == config.COLUMNS:
+                                game_config.game_is_over = True
+                                game_config.guesser_won = True
+
+                                for index, color in enumerate(game_config.solution):
+                                    self.board_view.board[0][index] = convert_input_to_color(color)
+
+                            else:
+                                game_config.current_row -= 1
+
+                            if game_config.current_row == 0 and black_pins != config.COLUMNS:
+                                game_config.game_is_over = True
+                                game_config.guesser_won = False
+
+
+                            if game_config.game_is_over and not game_config.guesser_won:
+                                print("Das Spiel ist vorbei. Der Kodierer hat gewonnen.")
+                            elif game_config.game_is_over and game_config.guesser_won:
+                                print("Das Spiel ist vorbei. Der Rater hat gewonnen.")
+
+                            game_config.coder_is_playing = False
+
+                        else:
+                            if not game_config.rate_was_correct: self.board_view.textfield_text = "Falsche Bewertung."
+                            else: self.board_view.textfield_text = "Bitte bewerte den Zug."
 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:# pylint: disable=E1101
@@ -286,11 +500,6 @@ class MainApp:
                                 if not is_left:
                                     game_config.feedback_board_final[row][column] = None
                                     self.board_view.board_feedback[row + 1] = game_config.feedback_board_final[row]
-                            # elif game_config.player_is_guesser and not game_config.game_is_over and not game_config.computer_is_playing:
-                            #     row, column, is_left = self.board_view.get_clicked_cell(mouse_pos)
-                            #     if is_left:
-                            #         game_config.board_guess[row][column] = None
-                            #         self.board_view.board[row] = game_config.board_guess[row]
 
                     elif event.type == pygame.MOUSEBUTTONUP:
                         # Wenn eine Maustaste losgelassen wird, führe das Drop-Event mit der aktuellen Mausposition aus

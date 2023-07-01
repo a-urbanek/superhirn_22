@@ -5,18 +5,17 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from logic.general_logic import calculate_pins
 
 IP_ADDRESS = "127.0.0.1"
-PORT = 8001
-
-array = [1, 2, 3, 4, 5, 6, 7, 8]
+PORT = 8005
 
 all_codes = {}
 
 
-def generate_secret_code(positions):
+def generate_secret_code(positions, colors):
     random_string = ""
     for _ in range(positions):
-        random_string += str(random.choice(array))
+        random_string += str(random.randint(1, colors))
     return random_string
+
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_response(self, status_code=200):
@@ -50,14 +49,15 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         if gameid == 0 or not gameid in all_codes:
             gameid = random.randint(1, 10000)
-            all_codes[gameid] = generate_secret_code(positions)
+            all_codes[gameid] = generate_secret_code(positions, colors)
             value = ""
             print("Solution:", all_codes[gameid])
         else:
             print("Use exicsting gameid")
             code = all_codes[gameid]
             guess = json_data.get("value")
-            white_pins, black_pins = calculate_pins(list(code), list(guess))
+            print("Guess: ", guess)
+            black_pins, white_pins = calculate_pins(list(code), list(guess))
             value = '7' * white_pins + '8' * black_pins
             print("White Pins:", white_pins)
             print("Black Pins:", black_pins)
@@ -70,9 +70,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             "value": value,
         }
 
+        print("Solution: ", all_codes[gameid])
+
         self._set_response()
         self.wfile.write(json.dumps(response).encode("utf-8"))
-
 
 
 def run_server():

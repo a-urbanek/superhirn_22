@@ -1,7 +1,9 @@
 import random
+
 from config import config
+from config import game_config
+from logic.color_mapping import convert_input_to_color
 from logic.general_logic import calculate_pins
-import matplotlib.pyplot as plt
 
 
 class ComputerGuesser:
@@ -23,49 +25,36 @@ class ComputerGuesser:
         """
         Bewertet den geratenen Code und gibt die Anzahl der schwarzen und weißen Pins zurück
         """
-        # black_pins = 0
-        # white_pins = 0
         code_copy = list(code)
         guess_copy = list(self.last_guess)
 
         black_pins, white_pins = calculate_pins(code_copy, guess_copy)
 
-        # # Überprüfe auf schwarze Pins (richtige Farbe an richtiger Position)
-        # for i in range(len(guess_copy)):
-        #     if guess_copy[i] == code_copy[i]:
-        #         black_pins += 1
-        #         code_copy[i] = None
-        #         guess_copy[i] = None
-        #
-        # # Überprüfe auf weiße Pins (richtige Farbe an falscher Position)
-        # for i in range(len(guess_copy)):
-        #     if guess_copy[i] is not None and guess_copy[i] in code_copy:
-        #         white_pins += 1
-        #         index = code_copy.index(guess_copy[i])
-        #         code_copy[index] = None
-        #         guess_copy[i] = None
-
         return black_pins, white_pins
 
-    def guess_code(self):
+    def guess(self, board_view):
         """
         Rät einen zufälligen Code aus der Liste der möglichen Codes und speichert ihn als letzten geratenen Code
         """
-
-        # TODO:
-        # if len(self.possibilities) == 0:
-        #     print("Was soll hier passieren?")
-
+        print("Anzahl der verbelibenden Möglichkeiten:", len(self.possibilities))
         guess = random.choice(self.possibilities)
         self.solutions.append(guess)
         self.last_guess = guess
-        return guess
+
+        for index, color in enumerate(guess):
+            # Board View hinzufügen
+            board_view.board[game_config.current_row][index] = convert_input_to_color(color)
+            game_config.board_guess[game_config.current_row][index] = color
+            game_config.board_final[game_config.current_row][index] = color
+
+        return True
 
     def evaluate_feedback(self, black_pins, white_pins):
         """
         Aktualisiert die Liste der möglichen Codes basierend auf dem erhaltenen Feedback
         """
-        self.possibilities = [code for code in self.possibilities if self.evaluate_guess(code) == (black_pins, white_pins)]
+        self.possibilities = [code for code in self.possibilities if
+                              self.evaluate_guess(code) == (black_pins, white_pins)]
 
     def get_all_possible_codes(self):
         """
@@ -83,6 +72,7 @@ class ComputerGuesser:
         generate_codes(config.COLORS_NUMBERS, self.code_length, [])
 
         return possibilities
+
 
 # game = ComputerGuesser(code_length=config.COLUMNS)
 # attempts_list = []
@@ -128,4 +118,3 @@ class ComputerGuesser:
 # print("Schnellster Versuch:", fastest_attempt, "Versuche")
 # print("Langsamster Versuch:", slowest_attempt, "Versuche")
 # print("Durchschnittliche Anzahl der Versuche:", average_attempt, "Versuche")
-

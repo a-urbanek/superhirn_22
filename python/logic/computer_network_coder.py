@@ -1,32 +1,29 @@
-import requests
 import json
-from config import game_config
+import requests
+
 from config import config
-
-# IP-Adresse des Servers
-IP_ADDRESS = "127.0.0.1"
-
-# Portnummer des Servers
-PORT = 8001
+from config import game_config
+from constants import MENU_NEW
 
 class ComputerNetworkCoder:
-    def __init__(self):
+    def __init__(self, game):
         # Initialisierung der Variablen
         self.gameid = 0
         self.gamerid = "Gruppe 22"
         self.positions = config.COLUMNS
         self.colors = len(config.COLORS)
         self.value = ""
+        self.game = game
+        game_config.no_network_connection = False
 
-        # Senden eines Requests an den Server, um das Spiel zu initialisieren
+    def generate_code(self, board_view):
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
-        print("Game ID:", self.gameid)
+        game_config.coder_is_playing = False
+        game_config.code_is_coded = True
+        print("Der Server hat den geheimen Code generiert.")
+        return True
 
-        if self.gameid != 0:
-            # Der Geheimcode wurde vom Server generiert
-            game_config.code_is_coded = True
-
-    def rate_moe(self):
+    def rate_move(self, board_view, guesser):
         """
         Bewertet den aktuellen Zug des Spielers.
         """
@@ -36,7 +33,8 @@ class ComputerNetworkCoder:
 
         # Umwandeln des Rateversuchs in einen String
         for num in current_guess:
-            string_guess += str(num)
+            if num != None:
+                string_guess += str(num)
 
         # Senden eines Requests an den Server, um den Rateversuch zu bewerten
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, string_guess)
@@ -45,9 +43,15 @@ class ComputerNetworkCoder:
         white_pins = self.value.count('7')
         black_pins = self.value.count('8')
 
-        if white_pins is config.COLUMNS:
+        for index in range(black_pins):
+            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
+
+        for index in range(white_pins):
+            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
+
+        if black_pins is config.COLUMNS:
             # Der Spieler hat gewonnen
-            game_config.player_won = True
+            game_config.guesser_won = True
             game_config.game_is_over = True
             game_config.solution = game_config.board_final[game_config.current_row]
 
@@ -71,7 +75,7 @@ class ComputerNetworkCoder:
             requests.exceptions.RequestException: Bei einem Fehler während der Anfrage.
         """
         global response
-        url = "http://{}:{}".format(IP_ADDRESS, PORT)
+        url = "http://{}:{}".format(game_config.IP_ADDRESS, game_config.PORT)
 
         data = {
             "gameid": gameid,
@@ -83,6 +87,8 @@ class ComputerNetworkCoder:
 
         headers = {"Content-Type": "application/json"}
 
+        print("An den Server gesendet:", data)
+
         try:
             # Senden einer POST-Anfrage an den Server
             response = requests.post(url, data=json.dumps(data), headers=headers)
@@ -91,11 +97,14 @@ class ComputerNetworkCoder:
 
             if response.status_code == 200:
                 # Extrahieren der Antwortdaten
+                print("Antwort vom Server:", response_data)
                 self.gameid = response_data.get("gameid", gameid)
                 self.value = response_data["value"]
 
         except requests.exceptions.RequestException as e:
-            print("Fehler beim Senden der Anfrage:", str(e))
+            game_config.no_network_connection = True
+            game_config.error_message = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
+            print("Es konnte keine Verbindung zum Server http://" + game_config.IP_ADDRESS + ":" + game_config.PORT + " aufgebaut werden.")
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()
                 error_message = response_data.get("error")

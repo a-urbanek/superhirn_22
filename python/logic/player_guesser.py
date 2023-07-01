@@ -1,11 +1,12 @@
+import config
 from config import game_config
+from config import config
 
 
 class PlayerGuesser:
-    def __init__(self):
-        # Initialisierung des PlayerGuesser-Objekts
-        # Hier können ggf. weitere Initialisierungen vorgenommen werden
-        pass
+    """
+    Klasse, die den Spielerrater repräsentiert.
+    """
 
     def make_move(self):
         """
@@ -24,3 +25,36 @@ class PlayerGuesser:
             game_config.computer_is_playing = True
 
         return
+
+    def evaluate_feedback(self, black_pins, white_pins):
+        """
+        Bewertet das Feedback des Spielers.
+
+        Args:
+            black_pins (int): Die Anzahl der schwarzen Pins.
+            white_pins (int): Die Anzahl der weißen Pins.
+        """
+        pass
+
+    def guess(self, board_view):
+        """
+        Führt einen Rateversuch des Spielers aus.
+
+        Args:
+            board_view (BoardView): Die Ansicht des Spielbretts.
+
+        Returns:
+            bool: Gibt zurück, ob der Rateversuch korrekt ausgeführt wurde.
+        """
+        row_is_correct = True
+
+        for column in range(config.COLUMNS):
+            if game_config.board_guess[game_config.current_row][column] is None:
+                row_is_correct = False
+
+        if row_is_correct:
+            game_config.board_final[game_config.current_row] = game_config.board_guess[game_config.current_row]
+            game_config.computer_is_playing = True
+
+        print("Der Rater hat versucht den Code zu knacken.")
+        return row_is_correct

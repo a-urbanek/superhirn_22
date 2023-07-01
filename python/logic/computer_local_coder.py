@@ -1,5 +1,5 @@
-from collections import Counter
 import numpy as np
+
 from config import config
 from config import game_config
 from logic.general_logic import calculate_pins
@@ -9,32 +9,26 @@ class ComputerLocalCoder:
     def __init__(self):
         self.current_guess = np.empty(config.COLUMNS, dtype=object)
         self.solution_temp = game_config.solution
-        self.red_pins = 0
+        self.black_pins = 0
         self.white_pins = 0
 
-    def rate_moe(self):
+    def rate_move(self, board_view, guesser):
         """
         Bewertet den aktuellen Zug des Spielers.
         """
-        # print(game_config.solution)
-        self.solution_temp = np.array(game_config.solution).copy()
-        self.current_guess = np.array(game_config.board_final[game_config.current_row]).copy()
-        self.red_pins, self.white_pins = calculate_pins(self.solution_temp, self.current_guess)
-        # self.red_pins = self.count_red_pins()
-        # self.white_pins = self.count_white_pins()
+        black_pins, white_pins = calculate_pins(game_config.solution.copy(), game_config.board_final[game_config.current_row].copy())
 
-        if self.red_pins is config.COLUMNS:
-            game_config.player_won = True
+        for index in range(black_pins):
+            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
+
+        for index in range(white_pins):
+            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
+
+        if black_pins == config.COLUMNS:
             game_config.game_is_over = True
+            game_config.guesser_won = True
 
-        # print("Number of white pins:", self.white_pins)
-        # print("Number of red pins:", self.red_pins)
-
-        # game_config.computer_is_playing = False
-        # game_config.current_row -= 1
-
-        # print(game_config.solution)
-        return self.white_pins, self.red_pins
+        return black_pins, white_pins
 
     def count_red_pins(self):
         """
@@ -61,12 +55,12 @@ class ComputerLocalCoder:
 
         return white_pins
 
-    def generate_code(self):
+    def generate_code(self, board_view):
         """
         Generiert einen zufälligen Code als Lösung für das Spiel.
         """
         solution = np.random.choice(config.COLORS_NUMBERS, size=config.COLUMNS)
         game_config.solution = solution
         game_config.code_is_coded = True
-        print("Code created:", solution)
-        return solution
+        print("Geheimcode wurde erstellt:", solution)
+        return True
