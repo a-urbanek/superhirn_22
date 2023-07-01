@@ -241,7 +241,7 @@ class BoardView:
         elif self.button_exit_rect.collidepoint(drop_pos):
             self.button_exit_callback(self)
         elif self.button_restart_rect.collidepoint(drop_pos):  # Geändert: Hinzugefügt
-            self.button_restart_callback(self)  # Geändert: Hinzugefügt
+            self.button_restart_callback()  # Geändert: Hinzugefügt
         else:
             # Einfärben der Zelle, wenn sie im Spielbrettbereich liegt
             drop_row, drop_column, isLeftBoard = self.get_clicked_cell(drop_pos)

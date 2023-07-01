@@ -73,7 +73,7 @@ class MainApp:
         self.menu_view_new = MenuViewUpdate(self.screen, self.handle_button_start_game_click)
 
         # Initialisierung der Boardansicht
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.handle_button_restart_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.start_new_game)
 
         # Initialisierung von Coder und Guesser
         self.coder = None
@@ -152,6 +152,22 @@ class MainApp:
             game_config.coder_is_computer_local = False
             game_config.coder_is_computer_server = True
 
+        self.start_new_game()
+
+    def handle_button_exit_click(self, board_view):
+        """
+        Diese Methode wird aufgerufen, wenn der "Exit" Button im Spiel geklickt wird.
+        Sie setzt den Zustand der Anwendung auf das Menü zurück.
+        """
+        self._state = MENU_NEW
+        self.menu_view = MenuView(self.screen)
+        self.menu_controller = MenuController(self.screen, self)
+        self.menu_view.clearSetting()
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
+        self.coder = None
+        self.guesser = None
+
+    def start_new_game(self):
         game_config.game_is_over = False
         game_config.board_guess = np.empty((config.ROWS, config.COLUMNS), dtype=object)
         game_config.board_final = np.empty((config.ROWS, config.COLUMNS), dtype=object)
@@ -163,9 +179,11 @@ class MainApp:
         game_config.no_network_connection = False
 
         # Farben für die Zellen im Spielbrett
-        config.COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255),
-                  (0, 0, 0)] if config.IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255),
-                                                        (255, 128, 0), (153, 76, 0)]
+        config.COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0),
+                         (255, 255, 255),
+                         (0, 0, 0)] if config.IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0),
+                                                                      (0, 0, 255),
+                                                                      (255, 128, 0), (153, 76, 0)]
 
         # Farbennummern für die Zellen im Spielbrett
         config.COLORS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8] if config.IS_SUPERSUPERHIRN else [1, 2, 3, 4, 5, 6]
@@ -182,7 +200,8 @@ class MainApp:
         # Erstellen des Boards, das die Bewertungen des Raters enthält
         game_config.feedback_board_final = np.empty(((config.ROWS - 1), config.COLUMNS), dtype=object)
 
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click, self.handle_button_restart_click)
+        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click,
+                                    self.handle_button_exit_click, self.start_new_game)
         self.update_roles()
 
         self._state = GAME
@@ -194,23 +213,6 @@ class MainApp:
         print("#                                          #")
         print("############################################")
         print()
-
-    def handle_button_exit_click(self, board_view):
-        """
-        Diese Methode wird aufgerufen, wenn der "Exit" Button im Spiel geklickt wird.
-        Sie setzt den Zustand der Anwendung auf das Menü zurück.
-        """
-        self._state = MENU_NEW
-        self.menu_view = MenuView(self.screen)
-        self.menu_controller = MenuController(self.screen, self)
-        self.menu_view.clearSetting()
-        self.board_view = BoardView(self.screen, self.color_cell, self.handle_button_click, self.handle_button_exit_click)
-        self.coder = None
-        self.guesser = None
-
-    def handle_button_restart_click(self, board_view):  
-        #Wie muss ich die Config Einstellungen bearbeiten damit es wieder zurückgesetzt ist
-        pass
 
     def handle_button_click(self, board_view):
         """
