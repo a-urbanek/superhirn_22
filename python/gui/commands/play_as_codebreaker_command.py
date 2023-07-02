@@ -20,9 +20,20 @@ class PlayAsCodeBreakerCommand(Command):
         print("Playing as CodeBreaker")
 
         game_config.player_is_guesser = True
-        self.main_app.set_state(GAME)
+        game_config.guesser_is_player = True
+        game_config.guesser_is_computer = False
+  
+        game_config.coder_is_player = False
+        game_config.coder_is_computer_local = True
+        game_config.coder_is_computer_server = False
+
+        if self.main_app.online_settings_model.online_mode:
+            game_config.IP_ADDRESS = self.main_app.online_settings_model.ip_address
+            game_config.PORT = self.main_app.online_settings_model.port
+
+        self.main_app.start_new_game()
         # main_app._player_guesser_state = False
 
     def __str__(self):
-        return "Play as CodeBreaker"
+        return "CodeBreaker Spielen"
     

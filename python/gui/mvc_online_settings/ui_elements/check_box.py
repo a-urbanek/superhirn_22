@@ -2,7 +2,7 @@ import pygame
 import time
 
 class CheckBox:
-    def __init__(self, position, width, height, model, property_name, color=(255, 255, 255), checked=False):
+    def __init__(self, position, width, height, model, property_name, color=(232, 234, 237), checked=False):
         self.rect = pygame.Rect(position[0], position[1], width, height)
         self.color = color
         self.model = model
@@ -20,7 +20,7 @@ class CheckBox:
 
     def draw(self, screen):
         if self.checked:
-            pygame.draw.rect(screen, (255, 0, 0), self.rect.inflate(-4, -4))
+            pygame.draw.rect(screen, (255, 60, 60), self.rect.inflate(-4, -4))
         else:
             pygame.draw.rect(screen, self.color, self.rect, 2)
 

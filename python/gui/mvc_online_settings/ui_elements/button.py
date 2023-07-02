@@ -1,11 +1,13 @@
 import pygame
-
+import sys
+sys.path.insert(0, '..')
+import font_manager
 class Button:
-    def __init__(self, position, width, height, color=(255, 255, 255), text="", callback=None):
+    def __init__(self, position, width, height, color=(232, 234, 237), text="", callback=None):
         self.rect = pygame.Rect(position[0], position[1], width, height)
         self.color = color
         self.text = text
-        self.font = pygame.font.Font(None, 36)
+        self.font = font_manager.FontManager().get_font()
         self.callback = callback
     
     def draw(self, screen):

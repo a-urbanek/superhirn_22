@@ -8,5 +8,5 @@ class Label:
 
     def draw(self, screen):
         text_surface = self.font.render(
-            self.text, True, (255, 255, 255))  # Assuming white text
+            self.text, True, (232, 234, 237))  # Assuming white text
         screen.blit(text_surface, self.position)

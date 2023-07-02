@@ -12,10 +12,10 @@ current_row = config.ROWS - 1
 computer_is_playing = False
 
 # Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
-computer_is_network = True
+computer_is_network = False
 
-guesser_is_player = False
-guesser_is_computer = True
+guesser_is_player = True
+guesser_is_computer = False
 coder_is_player = False
 coder_is_computer_local = True
 coder_is_computer_server = False
