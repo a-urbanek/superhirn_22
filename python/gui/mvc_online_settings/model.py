@@ -8,8 +8,8 @@ class Model:
 
         self._super_mode = False
         self.online_mode = False
-        self.port = "5001"
-        self.ip_address = "141.45.39.112"
+        self.port = "8005"
+        self.ip_address = "127.0.0.1"
         self.update_super_mode()
         self.update_online_mode()
 

@@ -4,7 +4,7 @@ import pygame
 from config import config
 from config import game_config
 import numpy as np
-from .commands.play_as_codemaker_command import PlayAsCodeMakerCommand
+from .commands.human_vs_human_command import HumanVsHuman
 
 import sys
 sys.path.insert(0, '..')
@@ -25,8 +25,8 @@ class MenuView:
         self.screen.blit(self.backgroundManager.background, (0, 0))
 
         for i, command in enumerate(self.model.menu_items):
-            if game_config.computer_is_network and isinstance(command, PlayAsCodeMakerCommand):
-                color = (112, 120, 122)  # Gray for inactive item
+            if game_config.computer_is_network and isinstance(command, HumanVsHuman):
+                color = (112, 120, 122)  # Gray for inactive item   
             elif i == selected_index:
                 color = (255, 60, 60)  # Red for selected item
             else:

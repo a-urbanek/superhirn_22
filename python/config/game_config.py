@@ -26,7 +26,7 @@ error_message = ""
 
 # IP-Adresse und Port für den Server
 IP_ADDRESS = "127.0.0.1"
-PORT = 8003
+PORT = 8005
 # IP_ADDRESS = "141.45.39.112"
 # PORT = 5001
 
