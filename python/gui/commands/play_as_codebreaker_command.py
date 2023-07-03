@@ -30,6 +30,9 @@ class PlayAsCodeBreakerCommand(Command):
         if self.main_app.online_settings_model.online_mode:
             game_config.IP_ADDRESS = self.main_app.online_settings_model.ip_address
             game_config.PORT = self.main_app.online_settings_model.port
+            game_config.coder_is_computer_local = False
+            game_config.coder_is_computer_server = True
+
 
         self.main_app.start_new_game()
         # main_app._player_guesser_state = False
