@@ -43,9 +43,9 @@ class ComputerGuesser:
 
         for index, color in enumerate(guess):
             # Board View hinzufügen
-            board_view.board[game_config.current_row][index] = convert_input_to_color(color)
-            game_config.board_guess[game_config.current_row][index] = color
-            game_config.board_final[game_config.current_row][index] = color
+            board_view.board[game_config.CURRENT_ROW][index] = convert_input_to_color(color)
+            game_config.BOARD_GUESS[game_config.CURRENT_ROW][index] = color
+            game_config.BOARD_FINAL[game_config.CURRENT_ROW][index] = color
 
         return True
 

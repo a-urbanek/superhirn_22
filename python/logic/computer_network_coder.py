@@ -14,12 +14,12 @@ class ComputerNetworkCoder:
         self.colors = len(config.COLORS)
         self.value = ""
         self.game = game
-        game_config.no_network_connection = False
+        game_config.NO_NETWORK_CONNECTION = False
 
     def generate_code(self, board_view):
         self.send_request(self.gameid, self.gamerid, self.positions, self.colors, self.value)
-        game_config.coder_is_playing = False
-        game_config.code_is_coded = True
+        game_config.CODER_IS_PLAYING = False
+        game_config.CODE_IS_CODED = True
         print("Der Server hat den geheimen Code generiert.")
         return True
 
@@ -27,7 +27,7 @@ class ComputerNetworkCoder:
         """
         Bewertet den aktuellen Zug des Spielers.
         """
-        current_guess = game_config.board_final[game_config.current_row]
+        current_guess = game_config.BOARD_FINAL[game_config.CURRENT_ROW]
 
         string_guess = ""
 
@@ -44,16 +44,16 @@ class ComputerNetworkCoder:
         black_pins = self.value.count('8')
 
         for index in range(black_pins):
-            board_view.board_feedback[game_config.current_row][index] = config.FEEDBACK_COLORS[1]
+            board_view.board_feedback[game_config.CURRENT_ROW][index] = config.FEEDBACK_COLORS[1]
 
         for index in range(white_pins):
-            board_view.board_feedback[game_config.current_row][index + black_pins] = config.FEEDBACK_COLORS[0]
+            board_view.board_feedback[game_config.CURRENT_ROW][index + black_pins] = config.FEEDBACK_COLORS[0]
 
         if black_pins is config.COLUMNS:
             # Der Spieler hat gewonnen
-            game_config.guesser_won = True
-            game_config.game_is_over = True
-            game_config.solution = game_config.board_final[game_config.current_row]
+            game_config.GUESSER_WON = True
+            game_config.GAME_IS_OVER = True
+            game_config.SOLUTION = game_config.BOARD_FINAL[game_config.CURRENT_ROW]
 
         return black_pins, white_pins
 
@@ -102,8 +102,8 @@ class ComputerNetworkCoder:
                 self.value = response_data["value"]
 
         except requests.exceptions.RequestException as e:
-            game_config.no_network_connection = True
-            game_config.error_message = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
+            game_config.NO_NETWORK_CONNECTION = True
+            game_config.ERROR_MESSAGE = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
             print("Es konnte keine Verbindung zum Server http://" + str(game_config.IP_ADDRESS) + ":" + str(game_config.PORT) + " aufgebaut werden.")
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()

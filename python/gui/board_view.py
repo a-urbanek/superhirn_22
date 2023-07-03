@@ -27,7 +27,7 @@ class BoardView:
         self.start_pos = (0, 0)
         self.current_pos = (0, 0)
         # self.used_colors = config.COLORS if game_config.player_is_guesser or not game_config.code_is_coded else config.FEEDBACK_COLORS
-        self.used_colors = config.FEEDBACK_COLORS if game_config.coder_is_playing and game_config.code_is_coded else config.COLORS
+        self.used_colors = config.FEEDBACK_COLORS if game_config.CODER_IS_PLAYING and game_config.CODE_IS_CODED else config.COLORS
 
         # Initialisierung des Spielbretts
         self.board = [[None] * config.COLUMNS for _ in range(config.ROWS)]
@@ -85,7 +85,7 @@ class BoardView:
         # UI-Elemente zeichnen
         self.gui_manager.draw_ui(self.screen)
 
-        self.used_colors = config.FEEDBACK_COLORS if game_config.coder_is_playing and game_config.code_is_coded else config.COLORS
+        self.used_colors = config.FEEDBACK_COLORS if game_config.CODER_IS_PLAYING and game_config.CODE_IS_CODED else config.COLORS
 
         # # # Rahmen um das Spielfeld zeichnen
         # board_rect = pygame.Rect(
@@ -115,7 +115,7 @@ class BoardView:
                 radius = config.CELL_SIZE // 2
                 pygame.draw.circle(
                     self.screen,
-                    (0,0,0) if row == 0 and game_config.player_is_guesser else config.CELL_COLOR,
+                    (0,0,0) if row == 0 and game_config.PLAYER_IS_GUESSER else config.CELL_COLOR,
                     (cell_x, cell_y),
                     radius
                 )
@@ -146,7 +146,7 @@ class BoardView:
                     radius = config.FEEDBACK_CELL_SIZE // 2
                     pygame.draw.circle(
                         self.screen,
-                        (255, 225, 225) if row == 0 and not game_config.player_is_guesser else self.board_feedback[row][
+                        (255, 225, 225) if row == 0 and not game_config.PLAYER_IS_GUESSER else self.board_feedback[row][
                             column],
                         (cell_x, cell_y),
                         radius
@@ -316,6 +316,6 @@ class BoardView:
 
     def check_if_first_row_is_not_visible(self, row):
         if row != 0: return False
-        elif game_config.coder_is_player: return False
-        elif game_config.game_is_over: return False
+        elif game_config.CODER_IS_PLAYER and game_config.CODER_IS_PLAYING: return False
+        elif game_config.GAME_IS_OVER: return False
         else: return True

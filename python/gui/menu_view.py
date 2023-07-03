@@ -25,7 +25,7 @@ class MenuView:
         self.screen.blit(self.backgroundManager.background, (0, 0))
 
         for i, command in enumerate(self.model.menu_items):
-            if game_config.computer_is_network and isinstance(command, HumanVsHuman):
+            if game_config.COMPUTER_IS_NETWORK and isinstance(command, HumanVsHuman):
                 color = (112, 120, 122)  # Gray for inactive item   
             elif i == selected_index:
                 color = (255, 60, 60)  # Red for selected item

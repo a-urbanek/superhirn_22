@@ -37,10 +37,10 @@ class Model:
 
     def update_online_mode(self):
         if self._online_mode:
-            game_config.coder_is_computer_server = True
-            game_config.coder_is_computer_local = False
-            game_config.computer_is_network = True
+            game_config.CODER_IS_COMPUTER_SERVER = True
+            game_config.CODER_IS_COMPUTER_LOCAL = False
+            game_config.COMPUTER_IS_NETWORK = True
         else:
-            game_config.coder_is_computer_server = False
-            game_config.coder_is_computer_local = True
-            game_config.computer_is_network = False
+            game_config.CODER_IS_COMPUTER_SERVER = False
+            game_config.CODER_IS_COMPUTER_LOCAL = True
+            game_config.COMPUTER_IS_NETWORK = False

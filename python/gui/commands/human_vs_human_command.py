@@ -17,12 +17,12 @@ class HumanVsHuman(Command):
             
            return print("Gamemode does not exist")
 
-        game_config.player_is_guesser = True
-        game_config.guesser_is_computer = False
-        game_config.guesser_is_player = True
-        game_config.coder_is_player = True
-        game_config.coder_is_computer_local = False
-        game_config.coder_is_computer_server = False
+        game_config.PLAYER_IS_GUESSER = True
+        game_config.GUESSER_IS_COMPUTER = False
+        game_config.GUESSER_IS_PLAYER = True
+        game_config.CODER_IS_PLAYER = True
+        game_config.CODER_IS_COMPUTER_LOCAL = False
+        game_config.CODER_IS_COMPUTER_SERVER = False
         
         self.main_app.start_new_game()
 
