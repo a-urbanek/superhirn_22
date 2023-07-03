@@ -1,6 +1,8 @@
 import json
 import random
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import sys
+sys.path.insert(0, '..')
 
 from logic.general_logic import calculate_pins
 
