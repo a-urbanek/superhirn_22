@@ -1,42 +1,36 @@
-import pygame
 import sys
-from .menu_model import MenuModel
-from .menu_view import MenuView
+from typing import TYPE_CHECKING
+import pygame
 from config import config
 
+if TYPE_CHECKING:
+    from .menu_model import MenuModel
+    from .menu_view import MenuView
 
-# This class handles events for the menu in the Pygame application.
 class MenuController:
-    def __init__(self, screen, main_app):
-        """
-        This is the constructor function for a menu object that initializes a model, view, and main
-        application.
-        
-        :param screen: The screen parameter is an object that represents the display screen on which the
-        menu will be displayed. It is used by the MenuView class to render the menu on the screen
-        :param main_app: The `main_app` parameter is an instance of the main application class that is using
-        the `Menu` class. It is passed to the `Menu` class so that the `Menu` class can communicate with the
-        main application and perform any necessary actions or updates
-        """
-        self.model = MenuModel()
-        self.view = MenuView(screen)
-        self.main_app = main_app
+    def __init__(self, model: 'MenuModel', view: 'MenuView'):
+        self.model = model
+        self.view = view
+        self.selected_index = 0
 
     def handle_event(self, event):
-        """
-        This function handles events in a Pygame application, including quitting the application and
-        executing menu commands based on mouse clicks.
-        
-        :param event: The event parameter is an object that represents a user input or system event that has
-        occurred in the Pygame application. It could be a mouse click, keyboard press, or window close
-        event, among others
-        """
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = pygame.mouse.get_pos()
+            pos_x, pos_y = pygame.mouse.get_pos()
             for i, command in enumerate(self.model.menu_items):
                 text = self.view.font.render(str(command), 1, (255, 255, 255))
                 text_rect = text.get_rect(center=(config.WIDTH / 2, 200 + i * 50))
-                if text_rect.collidepoint(x, y):
-                    command.execute(self.main_app)
+                if text_rect.collidepoint(pos_x, pos_y):
+                    self.selected_index = i
+                    command.execute()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.model.menu_items)
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.model.menu_items)
+            elif event.key == pygame.K_RETURN:
+                self.model.menu_items[self.selected_index].execute()
+
+        # Draw the view after handling the event
+        self.view.draw(self.selected_index)

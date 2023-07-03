@@ -1,10 +1,17 @@
+# The EditOnlineSettings class is a subclass of the Command class that sets the main app state to
+# ONLINE_SETTINGS
+
+import sys
 from .command import Command
+sys.path.insert(0, '..')
+from constants import ONLINE_SETTINGS
 
 
-# The EditOnlineSettings class 
 class EditOnlineSettings(Command):
-    def execute(self, main_app):
-        print("Online Settings")
+    
+    def execute(self):
+        print("Einstellungen")
+        self.main_app.set_state(ONLINE_SETTINGS)
 
     def __str__(self):
-        return "Online Settings"
+        return "Einstellungen"

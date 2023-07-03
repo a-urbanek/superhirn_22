@@ -1,7 +1,7 @@
 # Konfigurationen für das Spiel
 
 # Variable, die angibt, ob der Spielmodi Superhirn aktiv ist
-IS_SUPERSUPERHIRN = True
+IS_SUPERSUPERHIRN = False
 
 # Anzahl der Reihen (eine zusätzliche Reihe für die Farben)
 ROWS = 11
@@ -11,7 +11,7 @@ ROWS = 11
 COLUMNS = 5 if IS_SUPERSUPERHIRN else 4
 
 # Größe einer Zelle im Spielbrett
-CELL_SIZE = 50
+CELL_SIZE = 40
 
 # Abstand zwischen den Zellen
 GAP_SIZE = 5
@@ -89,4 +89,3 @@ HEIGHT = (
     + 5 * MARGIN
     + TEXTFIELD_HEIGHT
 ) > 500 else 500
-

@@ -78,8 +78,6 @@ class BoardView:
         # Feedback-Kugeln
         self.feedback_balls = [[None] * config.FEEDBACK_COLUMNS for _ in range(config.FEEDBACK_ROWS)]
 
-
-
     def draw(self):
         """
         Zeichnet das Spielbrett auf den Bildschirm.

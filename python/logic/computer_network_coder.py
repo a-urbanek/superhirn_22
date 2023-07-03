@@ -104,7 +104,7 @@ class ComputerNetworkCoder:
         except requests.exceptions.RequestException as e:
             game_config.no_network_connection = True
             game_config.error_message = "Es konnte keine Verbindung zum\nServer aufgebaut werden."
-            print("Es konnte keine Verbindung zum Server http://" + game_config.IP_ADDRESS + ":" + game_config.PORT + " aufgebaut werden.")
+            print("Es konnte keine Verbindung zum Server http://" + str(game_config.IP_ADDRESS) + ":" + str(game_config.PORT) + " aufgebaut werden.")
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 400:
                 response_data = e.response.json()
                 error_message = response_data.get("error")

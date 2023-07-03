@@ -1,13 +1,15 @@
+# The PlayAsCodeBreakerCommand class defines a command to set the state of the main app to "GAME" when
+# playing as a code breaker.
 from config import game_config
-from .command import Command
 
+from .command import Command
 import sys
 sys.path.insert(0, '..')
 from constants import GAME
 
 # The PlayAsCodeBreakerCommand class defines a command to play as a code breaker.
 class PlayAsCodeBreakerCommand(Command):
-    def execute(self, main_app):
+    def execute(self):
         """
         This function sets the state of the main app to "GAME"
         
@@ -16,9 +18,22 @@ class PlayAsCodeBreakerCommand(Command):
         main application
         """
         print("Playing as CodeBreaker")
+
         game_config.player_is_guesser = True
-        main_app._state = GAME
+        game_config.guesser_is_player = True
+        game_config.guesser_is_computer = False
+  
+        game_config.coder_is_player = False
+        game_config.coder_is_computer_local = True
+        game_config.coder_is_computer_server = False
+
+        if self.main_app.online_settings_model.online_mode:
+            game_config.IP_ADDRESS = self.main_app.online_settings_model.ip_address
+            game_config.PORT = self.main_app.online_settings_model.port
+
+        self.main_app.start_new_game()
         # main_app._player_guesser_state = False
 
     def __str__(self):
-        return "Play as CodeBreaker"
+        return "CodeBreaker Spielen"
+    
