@@ -3,9 +3,6 @@ import time
 import numpy as np
 import pygame
 
-from background_manager import BackGroundManager
-from config import config, game_config
-from constants import GAME, MENU, MENU_NEW, ONLINE_SETTINGS
 from gui.board_view import BoardView
 from gui.menu_controller import MenuController
 from gui.menu_model import MenuModel
@@ -15,6 +12,9 @@ from gui.mvc_online_settings.controller import \
     Controller as OnlineSettingsController
 from gui.mvc_online_settings.model import Model as OnlineSettingsModel
 from gui.mvc_online_settings.view import View as OnlineSettingsView
+from config import config, game_config
+from background_manager import BackGroundManager
+from constants import GAME, MENU, MENU_NEW, ONLINE_SETTINGS
 from logic.color_mapping import convert_input_to_color
 from logic.computer_guesser import ComputerGuesser
 from logic.computer_local_coder import ComputerLocalCoder

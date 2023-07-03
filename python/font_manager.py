@@ -2,7 +2,8 @@
 Module for managing fonts
 """
 import pygame
-
+import os
+import sys
 
 class FontManager:
     """The `FontManager` class initializes a dictionary of fonts and provides 
@@ -14,7 +15,7 @@ class FontManager:
         """
         pygame.font.init()
         self.fonts = {"PressStart2P": pygame.font.Font(
-            'PressStart2P-Regular.ttf', 18)}
+            self.resource_path('PressStart2P-Regular.ttf'), 18)}
         self.current_font ="PressStart2P"
 
     def get_font(self):
@@ -23,3 +24,14 @@ class FontManager:
         :return: The font corresponding to the current_font value.
         """
         return self.fonts[self.current_font]
+
+    # Added function for handling resource paths
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
