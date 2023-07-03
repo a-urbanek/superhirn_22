@@ -9,7 +9,7 @@ class ComputerNetworkCoder:
     def __init__(self, game):
         # Initialisierung der Variablen
         self.gameid = 0
-        self.gamerid = "Gruppe 22"
+        self.gamerid = game_config.GAMER_ID
         self.positions = config.COLUMNS
         self.colors = len(config.COLORS)
         self.value = ""
