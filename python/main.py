@@ -202,9 +202,7 @@ class MainApp:
         game_config.no_network_connection = False
 
         # Farben für die Zellen im Spielbrett
-        config.COLORS = [(207, 33, 30), (71, 132, 135),  (104, 156, 105), (215, 153, 34), (136, 84, 208),  (253, 166, 205),
-                          (50, 63, 152),
-                         (0, 168, 232)] if config.IS_SUPERSUPERHIRN else [(207, 33, 30), (71, 132, 135),  (104, 156, 105), (215, 153, 34), (136, 84, 208),  (253, 166, 205)]
+        config.COLORS = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0), (255, 255, 255), (0, 0, 0)] if config.IS_SUPERSUPERHIRN else [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 128, 0), (153, 76, 0)]
 
         # Farbennummern für die Zellen im Spielbrett
         config.COLORS_NUMBERS = [
@@ -588,7 +586,7 @@ class MainApp:
                         self.board_view.drop(mouse_pos)
 
                 # Bildschirm mit einer Hintergrundfarbe füllen
-                self.screen.fill((32, 33, 36))
+                self.screen.fill((80, 80, 80))
 
                 # Aktualisieren und Zeichnen des Spielbretts
                 self.board_view.update()

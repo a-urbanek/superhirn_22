@@ -66,12 +66,12 @@ BUTTON_HEIGHT = 30
 
 # Berechnung der Breite des Fensters basierend auf der Anzahl der Spalten und der Zellengröße
 WIDTH = (
-    COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE)
-    + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
+        (COLUMNS + 1) * (CELL_SIZE + FEEDBACK_CELL_SIZE)
+    + (COLUMNS) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
     + 4 * MARGIN + BUTTON_WIDTH
 ) if (
-    COLUMNS * (CELL_SIZE + FEEDBACK_CELL_SIZE)
-    + (COLUMNS - 1) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
+    (COLUMNS + 1) * (CELL_SIZE + FEEDBACK_CELL_SIZE)
+    + (COLUMNS) * (FEEDBACK_GAP_SIZE + GAP_SIZE)
     + 4 * MARGIN + BUTTON_WIDTH
 ) > (
     3 * MARGIN + len(COLORS) * (CELL_SIZE + GAP_SIZE) + 100
