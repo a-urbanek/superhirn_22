@@ -14,6 +14,7 @@ COMPUTER_IS_PLAYING = False
 # Variable, die angibt, ob der Computer über ein Netzwerk kommuniziert
 COMPUTER_IS_NETWORK = False
 
+# Variablen, um die verschiedenen Rollen festzulegen
 GUESSER_IS_PLAYER = True
 GUESSER_IS_COMPUTER = False
 CODER_IS_PLAYER = False
@@ -27,6 +28,7 @@ ERROR_MESSAGE = ""
 # IP-Adresse und Port für den Server
 IP_ADDRESS = "127.0.0.1"
 PORT = 8005
+GAMER_ID = "Gruppe22"
 # IP_ADDRESS = "141.45.39.112"
 # PORT = 5001
 
@@ -42,6 +44,7 @@ GAME_IS_OVER = False
 # Variable, die angibt, ob der Spieler gewonnen hat
 PLAYER_WON = False # muss raus
 
+# Variable, die angibt, ob der Rater gewonnen hat
 GUESSER_WON = False
 
 # Erstellen des Rate-Boards, auf dem der Spieler seinen Rateversuch macht
