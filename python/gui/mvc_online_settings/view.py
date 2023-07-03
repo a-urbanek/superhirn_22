@@ -17,7 +17,7 @@ class View:
 
         # UI elements
         self.return_button = Button(
-            (10, 10), 128, 40, text="Return", callback=MenuCommand(main_app).execute)
+            (10, 10), 128, 40, text="return", callback=MenuCommand(main_app).execute)
         self.super_checkbox = CheckBox((50, 70), 20, 20, self.model, 'super_mode') 
         self.super_checkbox_label = Label(
             (80, 70), "supersuper mode", self.font)  
