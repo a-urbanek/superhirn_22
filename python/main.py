@@ -229,6 +229,8 @@ class MainApp:
 
         self._state = GAME
 
+        game_config.CODER_IS_PLAYING = True
+
         print()
         print("############################################")
         print("#                                          #")

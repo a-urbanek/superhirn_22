@@ -16,26 +16,26 @@ class TestPlayerGuesser(unittest.TestCase):
         """
         Testet die make_move Methode, wenn die aktuelle Reihe nicht vollständig ist.
         """
-        game_config.board_guess[game_config.current_row][0] = 'Red'
+        game_config.BOARD_GUESS[game_config.CURRENT_ROW][0] = 'Red'
         self.player_guesser.make_move()
-        self.assertFalse(game_config.computer_is_playing)
+        self.assertFalse(game_config.COMPUTER_IS_PLAYING)
 
     def test_make_move_with_complete_guess(self):
         """
         Testet die make_move Methode, wenn die aktuelle Reihe vollständig ist.
         """
         for i in range(config.COLUMNS):
-            game_config.board_guess[game_config.current_row][i] = 'Red'
+            game_config.BOARD_GUESS[game_config.CURRENT_ROW][i] = 'Red'
         self.player_guesser.make_move()
-        self.assertTrue(game_config.computer_is_playing)
-        self.assertListEqual(game_config.board_guess[game_config.current_row].tolist(),
-                             game_config.board_final[game_config.current_row].tolist())
+        self.assertTrue(game_config.COMPUTER_IS_PLAYING)
+        self.assertListEqual(game_config.BOARD_GUESS[game_config.CURRENT_ROW].tolist(),
+                             game_config.BOARD_FINAL[game_config.CURRENT_ROW].tolist())
 
     def test_guess_with_incomplete_guess(self):
         """
         Testet die guess Methode, wenn die aktuelle Reihe unvollständig ist.
         """
-        game_config.board_guess[game_config.current_row][0] = 'Red'
+        game_config.BOARD_GUESS[game_config.CURRENT_ROW][0] = 'Red'
         result = self.player_guesser.guess(None)
         self.assertFalse(result)
 
@@ -44,7 +44,7 @@ class TestPlayerGuesser(unittest.TestCase):
         Testet die guess Methode, wenn die aktuelle Reihe vollständig ist.
         """
         for i in range(config.COLUMNS):
-            game_config.board_guess[game_config.current_row][i] = 'Red'
+            game_config.BOARD_GUESS[game_config.CURRENT_ROW][i] = 'Red'
         result = self.player_guesser.guess(None)
         self.assertTrue(result)
 
@@ -53,15 +53,15 @@ class TestPlayerGuesser(unittest.TestCase):
         Testet die make_move Methode ohne Rateversuch.
         """
         self.player_guesser.make_move()
-        self.assertFalse(game_config.computer_is_playing)
+        self.assertFalse(game_config.COMPUTER_IS_PLAYING)
 
     def test_make_move_with_one_color_guessed(self):
         """
         Testet die make_move Methode mit einer Farbe geraten.
         """
-        game_config.board_guess[game_config.current_row][0] = 'Red'
+        game_config.BOARD_GUESS[game_config.CURRENT_ROW][0] = 'Red'
         self.player_guesser.make_move()
-        self.assertFalse(game_config.computer_is_playing)
+        self.assertFalse(game_config.COMPUTER_IS_PLAYING)
 
     def test_guess_without_guess(self):
         """
@@ -74,7 +74,7 @@ class TestPlayerGuesser(unittest.TestCase):
         """
         Testet die guess Methode mit einer Farbe geraten.
         """
-        game_config.board_guess[game_config.current_row][0] = 'Red'
+        game_config.BOARD_GUESS[game_config.CURRENT_ROW][0] = 'Red'
         result = self.player_guesser.guess(None)
         self.assertFalse(result)
 
